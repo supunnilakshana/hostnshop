@@ -3,16 +3,15 @@
 import { useState } from "react";
 import {
     LayoutDashboard,
-    User,
     Settings,
-    Cookie,
     ArrowLeftToLine,
     ArrowRightToLine,
+    Combine,
+    Box,
+    LogIn
   } from "lucide-react";
- 
-  
   import { Button } from "@/components/ui/button";
-import Image from "next/image";
+  import Image from "next/image";
 
 
   interface SidebarProps {
@@ -39,12 +38,12 @@ import Image from "next/image";
         items: [
           {
             link: "/",
-            icon: <LayoutDashboard />,
+            icon: <Combine/>,
             text: "Categories",
           },
           {
             link: "/profile",
-            icon: <User />,
+            icon: <Box />,
             text: "Products",
           }
         ],
@@ -54,7 +53,7 @@ import Image from "next/image";
         items: [
           {
             link: "/sign-in",
-            icon: <User />,
+            icon: <LogIn/>,
             text: "Log In",
           }
         ],
@@ -63,11 +62,6 @@ import Image from "next/image";
       {
         group: "EXTRAS",    
         items: [
-          {
-            link: "/profile",
-            icon: <Cookie />,
-            text: "App",
-          },
           {
             link: "/",
             icon: <Settings />,
@@ -125,9 +119,9 @@ import Image from "next/image";
                       {menu.items.map((option, optionKey) => (
                         <div
                           key={optionKey}
-                          className="flex gap-2 cursor-pointer hover:bg-bg_secondary p-2 rounded-md"
+                          className="flex gap-6 cursor-pointer hover:bg-bg_secondary p-2 rounded-md"
                         >
-                          <div className="relative flex items-center mx-auto text-sm rounded-md cursor-pointer text-textSecondary">
+                          <div className="relative flex items-center mx-auto text-sm rounded-md cursor-pointer text-textSecondary p-1">
                             {option.icon}
                             <span
                               className={`overflow-hidden transition-all ${
