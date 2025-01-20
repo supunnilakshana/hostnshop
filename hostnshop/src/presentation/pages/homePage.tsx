@@ -3,10 +3,14 @@
 import { OrderList } from "../components/dashboard/orderList"
 import { IncomeTimeline } from "../components/dashboard/incomeTimeline"
 import Footer from "../components/footer"
+import MainWrapper from "../components/mainWrapper";
+import ProductList from "../components/dashboard/productList";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <MainWrapper>
+
+<div className="min-h-screen flex flex-col">
       <div className="bg-bg_primary text-accent">
         <div className="container mx-auto px-4 md:px-6 py-6 md:py-8">
           <h1 className="text-xl md:text-2xl font-semibold">Dashboard</h1>
@@ -19,9 +23,14 @@ export default function HomePage() {
           <IncomeTimeline />
         </div>
       </div>
+      <div>
+        <ProductList/>
+      </div>
 
       <Footer/>
     </div>
+    </MainWrapper>
+    
   )
 }
 
