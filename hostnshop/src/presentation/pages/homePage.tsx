@@ -1,10 +1,10 @@
 "use client"
 
-import { OrderList } from "./dashboard/orderList"
-import { IncomeTimeline } from "./dashboard/incomeTimeline"
-import Footer from "./footer"
+import { OrderList } from "../components/dashboard/orderList"
+import { IncomeTimeline } from "../components/dashboard/incomeTimeline"
+import Footer from "../components/footer"
 
-export default function Dashboard() {
+export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="bg-bg_primary text-accent">
