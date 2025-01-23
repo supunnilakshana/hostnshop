@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "../components/ui/button";
-import { Bell, Menu, X } from "lucide-react";
+import {Bell, Menu, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,11 +28,12 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarOpen }) => {
       >
         {isSidebarOpen ? <X /> : <Menu />}
       </Button>
-      
+
       <DropdownMenu>
         <DropdownMenuTrigger className="float-right">
+       
           {" "}
-          <Bell className="hover:border-none outline-none active:outline-none focus:outline-none rounded-full w-4 h-4 " />
+          <Bell className="hover:border-none outline-none active:outline-none focus:outline-none rounded-full w-4 h-4 " /> 
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
@@ -45,8 +46,22 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarOpen }) => {
       </DropdownMenu>
 
       <div className="mx-3">
-      <Image src="/assets/images/avatar.jpg" alt="Avatar" width={20} height={20} className="rounded-full"/>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="float-right">
+        <Image src="/assets/images/avatar.jpg" alt="Avatar" width={20} height={20} className="rounded-full"/>
+         
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem>Billing</DropdownMenuItem>
+          <DropdownMenuItem>Team</DropdownMenuItem>
+          <DropdownMenuItem>Subscription</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       </div>
+ 
     </div>
   );
 };

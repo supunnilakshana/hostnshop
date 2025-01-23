@@ -71,7 +71,7 @@ export function IncomeTimeline() {
 
     <Card className='shadow-xl h-full'>
       <CardHeader>
-        <CardTitle>Income Graph</CardTitle>
+        <CardTitle className="text-semibold text-lg">Income Graph</CardTitle>
         </CardHeader>
       <CardContent>
         <div className="space-y-4">

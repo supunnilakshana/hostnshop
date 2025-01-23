@@ -72,7 +72,7 @@ import {
     return (
       <Card className="shadow-xl">
         <CardHeader>
-          <CardTitle>Order List</CardTitle>
+          <CardTitle className="text-semibold text-lg">Order List</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>

@@ -30,21 +30,21 @@ const ProductCard = ({ product }: { product: Product }) => {
             width={400}
             height={400}
           />
-          <button className="absolute right-4 bottom-4 bg-bg_primary p-2 rounded-full text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-btn_hover">
-            <ShoppingCart size={20} />
+          <button className="absolute right-4 bottom-9 bg-bg_primary p-2 rounded-full text-accent transition-opacity duration-300">
+            <ShoppingCart size={15} />
           </button>
         </div>
         
         <div className="p-4">
-          <h3 className="text-lg font-semibold text-textPrimary mb-2">
+          <h3 className="text-md font-semibold text-textPrimary mb-2">
             {product.name}
           </h3>
           
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-lg font-bold text-textPrimary">
+            <span className="text-sm text-textPrimary">
               ${product.currentPrice}
             </span>
-            <span className="text-sm text-textSecondary line-through">
+            <span className="text-xs text-textSecondary text-muted line-through">
               ${product.originalPrice}
             </span>
           </div>
