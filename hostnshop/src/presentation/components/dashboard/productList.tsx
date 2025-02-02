@@ -1,11 +1,11 @@
 import React from 'react';
 import { Star, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
- import { Product } from '@/shared/types/product';
+ import { Productdashbord } from '@/shared/types/product';
  import { products } from '@/shared/data/product';
 
 
-const ProductCard = ({ product }: { product: Product }) => {
+const ProductCard = ({ product }: { product: Productdashbord }) => {
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, index) => (
         <Star
@@ -62,7 +62,7 @@ const ProductList = () => {
   return (
     <div className="bg-sidebarBg min-h-screen">
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
-      {products.map((product: Product) => (
+      {products.map((product: Productdashbord) => (
         <ProductCard key={product.id} product={product} />
       ))}
     </div>

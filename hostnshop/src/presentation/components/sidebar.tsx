@@ -43,7 +43,7 @@ import {
             text: "Categories",
           },
           {
-            link: "/profile",
+            link: "/admin/products",
             icon: <Box />,
             text: "Products",
           }

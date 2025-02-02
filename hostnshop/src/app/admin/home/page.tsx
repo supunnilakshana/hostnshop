@@ -1,10 +1,9 @@
-import HomePage from '@/presentation/pages/homePage'
 import React from 'react'
 
-export default function page() {
+function page() {
   return (
-    <div>
-        <HomePage/>
-    </div>
+    <div>page</div>
   )
 }
+
+export default page
