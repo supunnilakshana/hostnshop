@@ -1,0 +1,181 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String            @id @default(uuid()) @db.Uuid
+  role                UserRole
+  name                String
+  email               String            @unique
+  password_hash      String
+  social_login_provider String? 
+  social_login_id     String?           @unique
+  phone_number        String
+  address             String?
+  is_email_verified   Boolean           @default(false)
+  created_at          DateTime          @default(now())
+  
+  refreshTokens       RefreshToken[]
+  notifications       Notification[]
+  emailSubscriptions  EmailSubscription[]
+  orders              Order[]
+  reviews             Review[]
+  shippingAddresses   ShippingAddress[]
+}
+
+model RefreshToken {
+  id          String   @id @default(uuid()) @db.Uuid
+  user_id     String   @db.Uuid
+  refresh_token String  @unique
+  expires_at  DateTime
+  created_at  DateTime @default(now())
+
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id               String    @id @default(uuid()) @db.Uuid
+  name             String
+  description      String
+  price            Float
+  discount_percentage Float @default(0.00)
+  stock_quantity   Int
+  image_url        String
+  category_id      String?  @db.Uuid
+  created_at       DateTime @default(now())
+
+  category         Category? @relation(fields: [category_id], references: [id])
+  orderItems       OrderItem[]
+  reviews          Review[]
+}
+
+model Category {
+  id          String     @id @default(uuid()) @db.Uuid
+  name        String     @unique
+  created_at  DateTime   @default(now())
+
+  products    Product[]
+}
+
+model Order {
+  id          String     @id @default(uuid()) @db.Uuid
+  customer_id String     @db.Uuid
+  total_price Float
+  status      OrderStatus
+  created_at  DateTime   @default(now())
+
+  customer    User       @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+  payment     Payment?
+}
+
+model OrderItem {
+  id              String    @id @default(uuid()) @db.Uuid
+  order_id        String    @db.Uuid
+  product_id      String    @db.Uuid
+  quantity        Int
+  price_at_purchase Float
+  discount_applied Float @default(0.00)
+
+  order           Order     @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product         Product   @relation(fields: [product_id], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id              String    @id @default(uuid()) @db.Uuid
+  order_id        String    @db.Uuid @unique
+  payment_method  PaymentMethod
+  payment_status  PaymentStatus
+  transaction_id  String?   @unique
+  created_at      DateTime  @default(now())
+
+  order           Order     @relation(fields: [order_id], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id              String    @id @default(uuid()) @db.Uuid
+  customer_id     String    @db.Uuid
+  product_id      String    @db.Uuid
+  rating          Int       @default(0)
+  review_text     String?
+  created_at      DateTime  @default(now())
+
+  customer        User      @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  product         Product   @relation(fields: [product_id], references: [id], onDelete: Cascade)
+}
+
+model ShippingAddress {
+  id              String    @id @default(uuid()) @db.Uuid
+  customer_id     String    @db.Uuid
+  address         String
+  city            String
+  postal_code     String
+  country         String
+  is_default      Boolean   @default(false)
+
+  customer        User      @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id          String    @id @default(uuid()) @db.Uuid
+  user_id     String    @db.Uuid
+  title       String
+  message     String
+  type        NotificationType
+  is_read     Boolean   @default(false)
+  created_at  DateTime  @default(now())
+
+  user        User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model EmailSubscription {
+  id          String    @id @default(uuid()) @db.Uuid
+  customer_id String    @db.Uuid
+  is_subscribed Boolean @default(true)
+  created_at  DateTime @default(now())
+
+  customer    User      @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+}
+
+enum UserRole {
+  Admin
+  Customer
+}
+
+enum OrderStatus {
+  Pending
+  Processing
+  Shipped
+  Delivered
+  Cancelled
+}
+
+enum PaymentMethod {
+  CreditCard
+  PayPal
+  BankTransfer
+}
+
+enum PaymentStatus {
+  Pending
+  Completed
+  Failed
+  Refunded
+}
+
+enum NotificationType {
+  Email
+  Push
+  SMS
+}
