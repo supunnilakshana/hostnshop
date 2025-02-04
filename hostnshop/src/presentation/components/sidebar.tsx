@@ -87,13 +87,13 @@ import {
             <Image
               src="/assets/images/HostNShop.png"
               alt="HostNShop Logo"
-              width={10}
-              height={12}
+              width={80}
+              height={100}
               className={`overflow-hidden transition-all h-10  ${
-                expanded ? "w-16" : "w-0"
+                expanded ? "" : "w-0"
               }`}
             /> 
-            <p  className={`overflow-hidden transition-all h-10  ${
+            <p  className={`overflow-hidden transition-all text-[14px] font-semibold leading-4 ${
                 expanded ? "" : "w-0"
               }`}>HostNShop</p>
             <Button

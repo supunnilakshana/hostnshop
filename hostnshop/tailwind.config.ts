@@ -22,7 +22,16 @@ export default {
 			textPrimary: "#1E293B", // Dark text for primary headings
 			textSecondary: "#475569", // Lighter gray for secondary text
 			link: "#2563EB", // Blue color for links
-			btn_hover: "#7733ff"	  },
+			btn_hover: "#7733ff",	
+			bg_instock:' #66ff99' ,
+			text_instock:'#004d1a',
+			bg_lowstock:'#ff6666',
+			text_lowstock:'#990000',
+			bg_outofstock:'#b3b3b3',
+			text_outofstock:'#1a1a1a',
+
+		
+		},
 
 
   		borderRadius: {

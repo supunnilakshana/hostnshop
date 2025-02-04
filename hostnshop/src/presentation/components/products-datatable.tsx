@@ -56,17 +56,23 @@ export function ProductTable({ products }: ProductTableProps) {
             <TableCell>{product.discount}%</TableCell>
             <TableCell>{product.stockQuantity}</TableCell>
             <TableCell>
-              <Badge
-                variant={
-                  product.stockStatus === "In Stock"
-                    ? "default"
-                    : product.stockStatus === "Low Stock"
-                      ? "secondary"
-                      : "destructive"
-                }
-              >
-                {product.stockStatus}
-              </Badge>
+            <Badge
+    className={`px-2 py-1 rounded-md text-xs font-semibold
+      ${
+        product.stockStatus === "In Stock"
+          ? "bg-green-100 text-green-800"
+          : product.stockStatus === "Low Stock"
+          ? "bg-yellow-100 text-yellow-800"
+          : "bg-red-100 text-red-800"
+      }`}
+  >
+            {product.stockStatus === "In Stock"
+            ? "🟢 In Stock"
+            : product.stockStatus === "Low Stock"
+            ? "🟡 Low Stock"
+            : "🔴 Out of Stock"
+            }
+  </Badge>
             </TableCell>
             <TableCell>
               <DropdownMenu>
