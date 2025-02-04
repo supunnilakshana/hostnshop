@@ -1,7 +1,7 @@
 "use client"
 
-import { OrderList } from "./orderList"
-import { IncomeTimeline } from "./incomeTimeline"
+import { OrderList } from "./dashboard/orderList"
+import { IncomeTimeline } from "./dashboard/incomeTimeline"
 import Footer from "./footer"
 
 export default function Dashboard() {

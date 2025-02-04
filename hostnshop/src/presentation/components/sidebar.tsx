@@ -10,8 +10,9 @@ import {
     Box,
     LogIn
   } from "lucide-react";
-  import { Button } from "@/components/ui/button";
+  import { Button } from "../components/ui/button";
   import Image from "next/image";
+  import Link from "next/link";
 
 
   interface SidebarProps {
@@ -27,7 +28,7 @@ import {
         group: "HOME",
         items: [
           {
-            link: "/",
+            link: "/admin/home",
             icon: <LayoutDashboard />,
             text: "Dashboard",
           }
@@ -42,7 +43,7 @@ import {
             text: "Categories",
           },
           {
-            link: "/profile",
+            link: "/admin/products",
             icon: <Box />,
             text: "Products",
           }
@@ -52,7 +53,7 @@ import {
         group: "AUTH",
         items: [
           {
-            link: "/sign-in",
+            link: "/admin/login",
             icon: <LogIn/>,
             text: "Log In",
           }
@@ -86,13 +87,13 @@ import {
             <Image
               src="/assets/images/HostNShop.png"
               alt="HostNShop Logo"
-              width={10}
-              height={12}
+              width={80}
+              height={100}
               className={`overflow-hidden transition-all h-10  ${
-                expanded ? "w-16" : "w-0"
+                expanded ? "" : "w-0"
               }`}
             /> 
-            <p  className={`overflow-hidden transition-all h-10  ${
+            <p  className={`overflow-hidden transition-all text-[14px] font-semibold leading-4 ${
                 expanded ? "" : "w-0"
               }`}>HostNShop</p>
             <Button
@@ -115,24 +116,24 @@ import {
                         </p>
                       )}
 
-                    
-                      {menu.items.map((option, optionKey) => (
-                        <div
-                          key={optionKey}
-                          className="flex gap-6 cursor-pointer hover:bg-bg_secondary p-2 rounded-md"
-                        >
-                          <div className="relative flex items-center mx-auto text-sm rounded-md cursor-pointer text-textSecondary p-1">
-                            {option.icon}
-                            <span
-                              className={`overflow-hidden transition-all ${
-                                expanded ? "w-52 ml-3" : "w-0"
-                              }`}
-                            >
-                              {option.text}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
+                {menu.items.map((option, optionKey) => (
+                  <Link
+                    href={option.link}
+                    key={optionKey}
+                    className="flex gap-6 items-center hover:bg-bg_secondary p-2 rounded-md"
+                  >
+                    <div className="relative flex items-center mx-auto text-sm rounded-md text-textSecondary p-1">
+                      {option.icon}
+                      <span
+                        className={`overflow-hidden transition-all ${
+                          expanded ? "w-52 ml-3" : "w-0"
+                        }`}
+                      >
+                        {option.text}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
                     </div>
                   ))}
               </div>

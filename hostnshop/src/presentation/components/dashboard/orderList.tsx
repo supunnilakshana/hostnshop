@@ -3,7 +3,7 @@ import {
     CardContent,
     CardHeader,
     CardTitle,
-  } from "@/components/ui/card"
+  } from "../ui/card"
   import {
     Table,
     TableBody,
@@ -11,8 +11,8 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-  } from "@/components/ui/table"
-  import { Badge } from "@/components/ui/badge"
+  } from "../ui/table"
+  import { Badge } from "../ui/badge"
   
   interface Order {
     id: number
@@ -72,7 +72,7 @@ import {
     return (
       <Card className="shadow-xl">
         <CardHeader>
-          <CardTitle>Order List</CardTitle>
+          <CardTitle className="text-semibold text-lg">Order List</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
