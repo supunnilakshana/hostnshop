@@ -48,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarOpen }) => {
       <div className="mx-3">
       <DropdownMenu>
         <DropdownMenuTrigger className="float-right">
-        <Image src="/assets/images/avatar.jpg" alt="Avatar" width={20} height={20} className="rounded-full"/>
+        <Image src="/avatar.jpg" alt="Avatar" width={20} height={20} className="rounded-full"/>
          
         </DropdownMenuTrigger>
         <DropdownMenuContent>

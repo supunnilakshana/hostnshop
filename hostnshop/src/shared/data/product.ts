@@ -5,7 +5,7 @@ export const products = [
       currentPrice: 285,
       originalPrice: 375,
       rating: 4,
-      image: "/assets/images/lap.jpg",
+      image: "/lap.jpg",
     },
     {
       id: 2,
@@ -13,7 +13,7 @@ export const products = [
       currentPrice: 900,
       originalPrice: 650,
       rating: 5,
-      image: "/assets/images/lap.jpg",
+      image: "/lap.jpg",
     },
     {
       id: 3,
@@ -21,7 +21,7 @@ export const products = [
       currentPrice: 200,
       originalPrice: 150,
       rating: 3,
-      image: "/assets/images/lap.jpg",
+      image: "/lap.jpg",
     },
     {
       id: 4,
@@ -29,7 +29,7 @@ export const products = [
       currentPrice: 345,
       originalPrice: 285,
       rating: 2,
-      image: "/assets/images/lap.jpg",
+      image: "/lap.jpg",
     }
   ];
   
