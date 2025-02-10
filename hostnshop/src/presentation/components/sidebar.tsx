@@ -38,7 +38,7 @@ import {
         group: "UTILITIES",
         items: [
           {
-            link: "/",
+            link: "/admin/category",
             icon: <Combine/>,
             text: "Categories",
           },
