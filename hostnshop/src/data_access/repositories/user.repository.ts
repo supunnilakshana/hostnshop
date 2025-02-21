@@ -1,61 +1,48 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import {CreateUserDTO, UpdateUserDTO} from "@/shared/dtos";
-import {IRepository} from "./repository.interface";
-import {PrismaClient, User} from "@prisma/client"; // Import Prisma client and User model
+import {prisma} from "../db_client/prisma_client";
+import {
+  CreateUserDTO,
+  DeleteUserDTO,
+  ReadUserDTO,
+  UpdateUserDTO,
+} from "@/shared/dtos";
+import {IUserRepository} from "./iuser.repository";
+import {UserMapper} from "../mappers/prisma";
 
-const prisma = new PrismaClient();
-
-export class UserRepository implements IRepository {
-  // Create a new user
-  async create<ReadUserDTO, CreateUserDTO>(
-    data: CreateUserDTO
-  ): Promise<ReadUserDTO> {
-    const userData = data as UserDTO;
-    const user = await prisma.user.create({
-      data: {
-        role: userData.role,
-        name: userData.name,
-        email: userData.email,
-        password_hash: userData.password_hash,
-        phone_number: userData.phone_number,
-        address: userData.address,
-      },
-    });
-
-    const readuser: ReadUserDTO = user as R;
-
-    return user as unknown as ReadUserDTO;
+export class UserRepository implements IUserRepository {
+  async create(data: CreateUserDTO): Promise<ReadUserDTO> {
+    const user = await prisma.user.create({data});
+    return UserMapper.toReadDTO(user);
   }
 
-  // Update an existing user by id
-  async update(id: string, data: UpdateUserDTO): Promise<User | null> {
-    return prisma.user.update({
+  async update(id: string, data: UpdateUserDTO): Promise<ReadUserDTO | null> {
+    const user = await prisma.user.update({
       where: {id},
       data,
     });
+    return user ? UserMapper.toReadDTO(user) : null;
   }
 
-  // Find a user by id
-  async findOne(id: string): Promise<User | null> {
-    return prisma.user.findUnique({
+  async findOne(id: string): Promise<ReadUserDTO | null> {
+    const user = await prisma.user.findUnique({
       where: {id},
     });
+    return user ? UserMapper.toReadDTO(user) : null;
+  }
+  async findByEmail(email: string): Promise<ReadUserDTO | null> {
+    const user = await prisma.user.findUnique({
+      where: {email},
+    });
+    return user ? UserMapper.toReadDTO(user) : null;
+  }
+  async findAll(): Promise<ReadUserDTO[]> {
+    const users = await prisma.user.findMany();
+    return UserMapper.toReadDTOList(users);
   }
 
-  // Find all users
-  async findAll(): Promise<User[]> {
-    return prisma.user.findMany();
-  }
-
-  // Delete a user by id
-  async delete(id: string): Promise<boolean> {
-    try {
-      await prisma.user.delete({
-        where: {id},
-      });
-      return true;
-    } catch (error) {
-      return false;
-    }
+  async delete(data: DeleteUserDTO): Promise<boolean> {
+    const user = await prisma.user.delete({
+      where: {id: data.id},
+    });
+    return !!user;
   }
 }

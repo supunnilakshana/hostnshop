@@ -27,6 +27,7 @@ export interface ReadUserDTO {
   email: string;
   phone_number: string;
   address?: string;
+  password_hash?: string;
   is_email_verified: boolean;
   created_at: string;
 }
