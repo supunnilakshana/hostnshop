@@ -9,6 +9,6 @@ export enum HttpStatus {
 }
 
 export enum UserRole {
-  USER = "user",
-  ADMIN = "admin",
+  CUSTOMER = "Customer",
+  ADMIN = "Admin",
 }

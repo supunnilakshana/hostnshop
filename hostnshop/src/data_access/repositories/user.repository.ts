@@ -2,6 +2,7 @@ import {prisma} from "../db_client/prisma_client";
 import {
   CreateUserDTO,
   DeleteUserDTO,
+  ReadUserAuthDTO,
   ReadUserDTO,
   UpdateUserDTO,
 } from "@/shared/dtos";
@@ -28,11 +29,18 @@ export class UserRepository implements IUserRepository {
     });
     return user ? UserMapper.toReadDTO(user) : null;
   }
-  async findByEmail(email: string): Promise<ReadUserDTO | null> {
+
+  async findOneAuth(id: string): Promise<ReadUserAuthDTO | null> {
+    const user = await prisma.user.findUnique({
+      where: {id},
+    });
+    return user ? UserMapper.toReadAuthDTO(user) : null;
+  }
+  async findByEmail(email: string): Promise<ReadUserAuthDTO | null> {
     const user = await prisma.user.findUnique({
       where: {email},
     });
-    return user ? UserMapper.toReadDTO(user) : null;
+    return user ? UserMapper.toReadAuthDTO(user) : null;
   }
   async findAll(): Promise<ReadUserDTO[]> {
     const users = await prisma.user.findMany();

@@ -20,7 +20,7 @@ export interface UpdateUserDTO {
 }
 
 // Read User DTO (for fetching user data)
-export interface ReadUserDTO {
+export interface ReadUserAuthDTO {
   id: string;
   role: "Admin" | "Customer";
   name: string;
@@ -31,7 +31,17 @@ export interface ReadUserDTO {
   is_email_verified: boolean;
   created_at: string;
 }
+export interface ReadUserDTO {
+  id: string;
+  role: "Admin" | "Customer";
+  name: string;
+  email: string;
+  phone_number: string;
+  address?: string;
 
+  is_email_verified: boolean;
+  created_at: string;
+}
 // Delete User DTO
 export interface DeleteUserDTO {
   id: string;

@@ -1,111 +1,126 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // controllers/auth.controller.ts
 import {NextRequest} from "next/server";
 import {BaseController} from "./base.controller";
-import {UserRole} from "@/shared/enums/auth.enum";
-import {JWTUtil} from "@/shared/utils/jwt_util";
 
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-interface RegisterRequest {
-  email: string;
-  password: string;
-  name: string;
-}
-
-interface AuthResponse {
-  user: {
-    id: string;
-    email: string;
-    role: UserRole;
-  };
-  accessToken: string;
-}
+import {HttpStatus} from "@/shared/enums";
+import {SignInRequest, SignUpRequest} from "@/shared/types";
+import {AuthService} from "../services/auth_service";
 
 export class AuthController extends BaseController {
-  // Login endpoint
-  async login(req: NextRequest) {
-    return this.handleRequest(req, async () => {
-      const {email, password} = await this.getRequestBody<LoginRequest>(req);
+  private authService: AuthService;
 
-      // In real app, verify from database
-      // This is just for demonstration
-      if (email === "admin@example.com" && password === "admin123") {
-        const user = {
-          id: "1",
-          email,
-          role: UserRole.ADMIN,
-        };
-
-        const accessToken = JWTUtil.generateAccessToken(user);
-
-        const response: AuthResponse = {
-          user,
-          accessToken,
-        };
-
-        return response;
-      }
-
-      if (email === "user@example.com" && password === "user123") {
-        const user = {
-          id: "2",
-          email,
-          role: UserRole.USER,
-        };
-
-        const accessToken = JWTUtil.generateAccessToken(user);
-
-        const response: AuthResponse = {
-          user,
-          accessToken,
-        };
-
-        return response;
-      }
-
-      throw new Error("Invalid credentials");
-    });
+  constructor() {
+    super();
+    this.authService = new AuthService();
   }
 
-  // Register endpoint
-  async register(req: NextRequest) {
-    return this.handleRequest(req, async () => {
-      const {email, password, name} =
-        await this.getRequestBody<RegisterRequest>(req);
+  async signUp(req: NextRequest) {
+    try {
+      const data = await this.getRequestBody<SignUpRequest>(req);
+      const result = await this.authService.signUp(data);
+      return this.sendSuccess(result, HttpStatus.CREATED);
+    } catch (error: any) {
+      return this.sendError({
+        message: error.message,
+        statusCode: error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
 
-      // In real app, save to database
-      // This is just for demonstration
-      const user = {
-        id: Date.now().toString(),
-        email,
-        role: UserRole.USER,
-      };
+  async signIn(req: NextRequest) {
+    try {
+      const credentials = await this.getRequestBody<SignInRequest>(req);
+      const result = await this.authService.signIn(credentials);
+      return this.sendSuccess(result);
+    } catch (error: any) {
+      return this.sendError({
+        message: error.message,
+        statusCode: error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
 
-      const accessToken = JWTUtil.generateAccessToken(user);
+  async refreshToken(req: NextRequest) {
+    try {
+      const {refreshToken} = await this.getRequestBody<{refreshToken: string}>(
+        req
+      );
+      const result = await this.authService.refreshTokens(refreshToken);
+      return this.sendSuccess(result);
+    } catch (error: any) {
+      return this.sendError({
+        message: error.message,
+        statusCode: error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
 
-      const response: AuthResponse = {
-        user,
-        accessToken,
-      };
+  async changePassword(req: NextRequest) {
+    try {
+      const {oldPassword, newPassword} = await this.getRequestBody<{
+        oldPassword: string;
+        newPassword: string;
+      }>(req);
 
-      return response;
-    });
-  } // Update profile endpoint
-  async updateProfile(req: NextRequest) {
-    return this.handleRequest(
-      req,
-      async (user) => {
-        // Your database update logic here
-        return {
-          id: "1",
-          email: "ddd",
-        };
-      },
-      [UserRole.USER, UserRole.ADMIN]
-    );
+      const user = await this.getUser(req);
+      if (!user) {
+        return this.sendError({
+          message: "User not authenticated",
+          statusCode: HttpStatus.UNAUTHORIZED,
+        });
+      }
+
+      await this.authService.changePassword(user.id, oldPassword, newPassword);
+      return this.sendSuccess({message: "Password changed successfully"});
+    } catch (error: any) {
+      return this.sendError({
+        message: error.message,
+        statusCode: error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
+
+  async resetPassword(req: NextRequest) {
+    try {
+      const {email} = await this.getRequestBody<{email: string}>(req);
+      await this.authService.resetPassword(email);
+      return this.sendSuccess({
+        message:
+          "If the email exists, password reset instructions will be sent",
+      });
+    } catch (error: any) {
+      return this.sendError({
+        message: error.message,
+        statusCode: error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
+
+  async validateToken(req: NextRequest) {
+    try {
+      const token = req.headers.get("authorization")?.split(" ")[1];
+      if (!token) {
+        return this.sendError({
+          message: "No token provided",
+          statusCode: HttpStatus.UNAUTHORIZED,
+        });
+      }
+
+      const isValid = await this.authService.validateToken(token);
+      if (!isValid) {
+        return this.sendError({
+          message: "Invalid token",
+          statusCode: HttpStatus.UNAUTHORIZED,
+        });
+      }
+
+      return this.sendSuccess({valid: true});
+    } catch (error: any) {
+      return this.sendError({
+        message: error.message,
+        statusCode: HttpStatus.UNAUTHORIZED,
+      });
+    }
   }
 }

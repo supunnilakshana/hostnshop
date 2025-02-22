@@ -14,7 +14,20 @@ export interface ApiResponse<T = any> {
   message?: string;
   statusCode: number;
 }
+
 export interface ErrorResponse {
   message: string;
   statusCode: HttpStatus;
+}
+
+export class HttpError extends Error {
+  constructor(
+    public statusCode: HttpStatus,
+    message: string,
+    public code?: string
+  ) {
+    super(message);
+    this.name = "HttpError";
+    Object.setPrototypeOf(this, HttpError.prototype);
+  }
 }

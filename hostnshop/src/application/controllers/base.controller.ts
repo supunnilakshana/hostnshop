@@ -9,7 +9,7 @@ import {ApiResponse, AuthUser, ErrorResponse} from "@/shared/types";
 export abstract class BaseController {
   protected async handleRequest<T>(
     req: NextRequest,
-    handler: (user?: AuthUser) => Promise<T>,
+    handler: (user?: AuthUser | null) => Promise<T>,
     roles: UserRole[] = []
   ): Promise<NextResponse> {
     try {
@@ -72,5 +72,11 @@ export abstract class BaseController {
 
   protected async getRequestBody<T>(req: NextRequest): Promise<T> {
     return (await req.json()) as T;
+  }
+
+  protected async getUser(req: NextRequest): Promise<AuthUser | null> {
+    const authResult = await verifyAuth(req);
+
+    return authResult.success ? authResult.user ?? null : null;
   }
 }

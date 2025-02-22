@@ -1,14 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {NextRequest, NextResponse} from "next/server";
-import {AuthUser} from "../types";
+import {AuthResult, AuthUser} from "../types";
 import {HttpStatus, UserRole} from "../enums";
 import {JWTUtil} from "../utils/jwt_util";
-
-export interface AuthResult {
-  success: boolean;
-  user?: AuthUser;
-  error?: NextResponse;
-}
 
 export async function verifyAuth(
   req: NextRequest,
