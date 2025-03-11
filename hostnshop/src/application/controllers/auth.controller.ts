@@ -5,7 +5,7 @@ import {BaseController} from "./base.controller";
 
 import {HttpStatus} from "@/shared/enums";
 import {SignInRequest, SignUpRequest} from "@/shared/types";
-import {AuthService} from "../services/auth_service";
+import {AuthService} from "../services/auth.service";
 
 export class AuthController extends BaseController {
   private authService: AuthService;

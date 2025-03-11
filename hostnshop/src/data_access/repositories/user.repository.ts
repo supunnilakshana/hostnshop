@@ -8,6 +8,7 @@ import {
 } from "@/shared/dtos";
 import {IUserRepository} from "./iuser.repository";
 import {UserMapper} from "../mappers/prisma";
+import {UserRole} from "@prisma/client";
 
 export class UserRepository implements IUserRepository {
   async create(data: CreateUserDTO): Promise<ReadUserDTO> {
@@ -36,6 +37,14 @@ export class UserRepository implements IUserRepository {
     });
     return user ? UserMapper.toReadAuthDTO(user) : null;
   }
+
+  async findByRole(role: string): Promise<ReadUserDTO[]> {
+    const users = await prisma.user.findMany({
+      where: {role: role as UserRole},
+    });
+    return UserMapper.toReadDTOList(users);
+  }
+
   async findByEmail(email: string): Promise<ReadUserAuthDTO | null> {
     const user = await prisma.user.findUnique({
       where: {email},

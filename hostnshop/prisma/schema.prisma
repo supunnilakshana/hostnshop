@@ -179,3 +179,23 @@ enum NotificationType {
   Push
   SMS
 }
+
+model Promotions {
+  id                  String     @id @default(uuid()) @db.Uuid
+  code                String     @unique
+  discount_percentage Float
+  expires_at          DateTime?
+  max_uses            Int?
+  uses                Int        @default(0)
+  is_active           Boolean    @default(true)
+  min_order_value     Float?
+  created_at          DateTime   @default(now())
+}
+
+model Banners {
+  id          String    @id @default(uuid()) @db.Uuid
+  image_url   String
+  link        String
+  created_at  DateTime  @default(now())
+}
+
