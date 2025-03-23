@@ -5,8 +5,15 @@ import {NextRequest, NextResponse} from "next/server";
 import {verifyAuth} from "@/shared/middleware/auth.middleware";
 import {HttpStatus, UserRole} from "@/shared/enums";
 import {ApiResponse, AuthUser, ErrorResponse} from "@/shared/types";
+import {ServiceLocator} from "../config/service_locator";
 
 export abstract class BaseController {
+  protected serviceLocator: ServiceLocator;
+
+  constructor() {
+    this.serviceLocator = ServiceLocator.getInstance();
+  }
+
   protected async handleRequest<T>(
     req: NextRequest,
     handler: (user?: AuthUser | null) => Promise<T>,

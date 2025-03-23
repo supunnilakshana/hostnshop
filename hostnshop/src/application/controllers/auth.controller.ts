@@ -5,20 +5,13 @@ import {BaseController} from "./base.controller";
 
 import {HttpStatus} from "@/shared/enums";
 import {SignInRequest, SignUpRequest} from "@/shared/types";
-import {AuthService} from "../services/auth.service";
 
 export class AuthController extends BaseController {
-  private authService: AuthService;
-
-  constructor() {
-    super();
-    this.authService = new AuthService();
-  }
-
   async signUp(req: NextRequest) {
     try {
       const data = await this.getRequestBody<SignUpRequest>(req);
-      const result = await this.authService.signUp(data);
+      const authService = this.serviceLocator.getAuthService();
+      const result = await authService.signUp(data);
       return this.sendSuccess(result, HttpStatus.CREATED);
     } catch (error: any) {
       return this.sendError({
@@ -31,7 +24,8 @@ export class AuthController extends BaseController {
   async signIn(req: NextRequest) {
     try {
       const credentials = await this.getRequestBody<SignInRequest>(req);
-      const result = await this.authService.signIn(credentials);
+      const authService = this.serviceLocator.getAuthService();
+      const result = await authService.signIn(credentials);
       return this.sendSuccess(result);
     } catch (error: any) {
       return this.sendError({
@@ -46,7 +40,8 @@ export class AuthController extends BaseController {
       const {refreshToken} = await this.getRequestBody<{refreshToken: string}>(
         req
       );
-      const result = await this.authService.refreshTokens(refreshToken);
+      const authService = this.serviceLocator.getAuthService();
+      const result = await authService.refreshTokens(refreshToken);
       return this.sendSuccess(result);
     } catch (error: any) {
       return this.sendError({
@@ -71,7 +66,8 @@ export class AuthController extends BaseController {
         });
       }
 
-      await this.authService.changePassword(user.id, oldPassword, newPassword);
+      const authService = this.serviceLocator.getAuthService();
+      await authService.changePassword(user.id, oldPassword, newPassword);
       return this.sendSuccess({message: "Password changed successfully"});
     } catch (error: any) {
       return this.sendError({
@@ -84,7 +80,8 @@ export class AuthController extends BaseController {
   async resetPassword(req: NextRequest) {
     try {
       const {email} = await this.getRequestBody<{email: string}>(req);
-      await this.authService.resetPassword(email);
+      const authService = this.serviceLocator.getAuthService();
+      await authService.resetPassword(email);
       return this.sendSuccess({
         message:
           "If the email exists, password reset instructions will be sent",
@@ -107,7 +104,8 @@ export class AuthController extends BaseController {
         });
       }
 
-      const isValid = await this.authService.validateToken(token);
+      const authService = this.serviceLocator.getAuthService();
+      const isValid = await authService.validateToken(token);
       if (!isValid) {
         return this.sendError({
           message: "Invalid token",
