@@ -9,7 +9,7 @@ export const initialProducts: Product[] = [
     discount: 10,
     stockQuantity: 100,
     stockStatus: "In Stock",
-    image: "/assets/images/lap.jpg",
+    image: "/lap.jpg",
   },
   {
     id: "2",
@@ -19,6 +19,6 @@ export const initialProducts: Product[] = [
     discount: 0,
     stockQuantity: 50,
     stockStatus: "Low Stock",
-    image: "/assets/images/lap.jpg",
+    image: "/lap.jpg",
   },
 ]

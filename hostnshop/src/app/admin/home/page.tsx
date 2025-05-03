@@ -1,8 +1,11 @@
+import HomePage from '@/presentation/pages/homePage'
 import React from 'react'
 
 function page() {
   return (
-    <div>page</div>
+    <div>
+      <HomePage/>
+    </div>
   )
 }
 

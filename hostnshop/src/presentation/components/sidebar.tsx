@@ -85,7 +85,7 @@ import {
             }`}
           >
             <Image
-              src="/assets/images/HostNShop.png"
+              src="/HostNShop.png"
               alt="HostNShop Logo"
               width={80}
               height={100}
