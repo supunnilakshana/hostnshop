@@ -1,4 +1,4 @@
-import Image from "next/image"
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/presentation/components/ui/table"
 import { Badge } from "@/presentation/components/ui/badge"
 import { Button } from "@/presentation/components/ui/button"
@@ -37,12 +37,10 @@ export function ProductTable({ products }: ProductTableProps) {
           <TableRow key={product.id}>
             <TableCell>
               <div className="relative w-10 h-10">
-                <Image
-                  src={product.image || "/placeholder.svg"}
+                <img
+                  src={product.image}
                   alt={product.name}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-md"
+                 
                 />
               </div>
             </TableCell>

@@ -7,8 +7,9 @@ import {
     ArrowLeftToLine,
     ArrowRightToLine,
     Combine,
-    Box,
-    LogIn
+    LogIn,
+    CalendarCheck2,
+    ShoppingBag
   } from "lucide-react";
   import { Button } from "../components/ui/button";
   import Image from "next/image";
@@ -44,8 +45,13 @@ import {
           },
           {
             link: "/admin/products",
-            icon: <Box />,
+            icon: <ShoppingBag/>,
             text: "Products",
+          },
+          {
+            link: "/admin/orders",
+            icon: <CalendarCheck2/>,
+            text: "Orders",
           }
         ],
       },
