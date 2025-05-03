@@ -9,7 +9,7 @@ export interface IOrderRepository {
   findOne(id: string): Promise<ReadOrderDTO | null>;
   findOneWithDetails(id: string): Promise<any | null>;
   findAll(options?: {
-    customerId?: string;
+    customerId?: string | null;
     status?: OrderStatus;
     page?: number;
     limit?: number;
