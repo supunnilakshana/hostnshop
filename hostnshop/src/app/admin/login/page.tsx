@@ -1,12 +1,13 @@
-import HomePage from '@/presentation/pages/homePage'
+import LoginForm from '@/presentation/pages/loginPage'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      <HomePage/>
+<LoginForm/>
+
     </div>
-  );
+  )
 }
 
 export default page

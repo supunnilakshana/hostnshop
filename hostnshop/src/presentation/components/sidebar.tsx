@@ -3,16 +3,17 @@
 import { useState } from "react";
 import {
     LayoutDashboard,
-    User,
     Settings,
-    Cookie,
     ArrowLeftToLine,
     ArrowRightToLine,
+    Combine,
+    LogIn,
+    CalendarCheck2,
+    ShoppingBag
   } from "lucide-react";
- 
-  
-  import { Button } from "@/components/ui/button";
-import Image from "next/image";
+  import { Button } from "../components/ui/button";
+  import Image from "next/image";
+  import Link from "next/link";
 
 
   interface SidebarProps {
@@ -28,7 +29,7 @@ import Image from "next/image";
         group: "HOME",
         items: [
           {
-            link: "/",
+            link: "/admin/home",
             icon: <LayoutDashboard />,
             text: "Dashboard",
           }
@@ -38,14 +39,19 @@ import Image from "next/image";
         group: "UTILITIES",
         items: [
           {
-            link: "/",
-            icon: <LayoutDashboard />,
+            link: "/admin/category",
+            icon: <Combine/>,
             text: "Categories",
           },
           {
-            link: "/profile",
-            icon: <User />,
+            link: "/admin/products",
+            icon: <ShoppingBag/>,
             text: "Products",
+          },
+          {
+            link: "/admin/orders",
+            icon: <CalendarCheck2/>,
+            text: "Orders",
           }
         ],
       },
@@ -53,8 +59,8 @@ import Image from "next/image";
         group: "AUTH",
         items: [
           {
-            link: "/sign-in",
-            icon: <User />,
+            link: "/admin/login",
+            icon: <LogIn/>,
             text: "Log In",
           }
         ],
@@ -63,11 +69,6 @@ import Image from "next/image";
       {
         group: "EXTRAS",    
         items: [
-          {
-            link: "/profile",
-            icon: <Cookie />,
-            text: "App",
-          },
           {
             link: "/",
             icon: <Settings />,
@@ -90,15 +91,15 @@ import Image from "next/image";
             }`}
           >
             <Image
-              src="/assets/images/HostNShop.png"
+              src="/HostNShop.png"
               alt="HostNShop Logo"
-              width={10}
-              height={12}
+              width={80}
+              height={100}
               className={`overflow-hidden transition-all h-10  ${
-                expanded ? "w-16" : "w-0"
+                expanded ? "" : "w-0"
               }`}
             /> 
-            <p  className={`overflow-hidden transition-all h-10  ${
+            <p  className={`overflow-hidden transition-all text-[14px] font-semibold leading-4 ${
                 expanded ? "" : "w-0"
               }`}>HostNShop</p>
             <Button
@@ -121,24 +122,24 @@ import Image from "next/image";
                         </p>
                       )}
 
-                    
-                      {menu.items.map((option, optionKey) => (
-                        <div
-                          key={optionKey}
-                          className="flex gap-2 cursor-pointer hover:bg-bg_secondary p-2 rounded-md"
-                        >
-                          <div className="relative flex items-center mx-auto text-sm rounded-md cursor-pointer text-textSecondary">
-                            {option.icon}
-                            <span
-                              className={`overflow-hidden transition-all ${
-                                expanded ? "w-52 ml-3" : "w-0"
-                              }`}
-                            >
-                              {option.text}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
+                {menu.items.map((option, optionKey) => (
+                  <Link
+                    href={option.link}
+                    key={optionKey}
+                    className="flex gap-6 items-center hover:bg-bg_secondary p-2 rounded-md"
+                  >
+                    <div className="relative flex items-center mx-auto text-sm rounded-md text-textSecondary p-1">
+                      {option.icon}
+                      <span
+                        className={`overflow-hidden transition-all ${
+                          expanded ? "w-52 ml-3" : "w-0"
+                        }`}
+                      >
+                        {option.text}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
                     </div>
                   ))}
               </div>
