@@ -1,18 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/account/AddressBook.tsx
-("use client");
+"use client";
 
 import {useState, useEffect} from "react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {Checkbox} from "@/components/ui/checkbox";
+import {Button} from "@/presentation/components/ui/button";
+import {Input} from "@/presentation/components/ui/input";
+import {Label} from "@/presentation/components/ui/label";
+import {Checkbox} from "@/presentation/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/presentation/components/ui/dialog";
 import {Plus, Pencil, Trash2} from "lucide-react";
 import {ReadShippingAddressDTO} from "@/shared/dtos";
 import {apiClient} from "@/lib/api/client";
@@ -44,9 +45,9 @@ export default function AddressBook() {
         "shipping-addresses"
       );
 
-      if (response.success) {
-        setAddresses(response.data);
-      }
+      // if (response.success) {
+      setAddresses(response.data);
+      // }
     } catch (error) {
       console.error("Failed to fetch addresses:", error);
     } finally {
@@ -84,11 +85,11 @@ export default function AddressBook() {
         formData
       );
 
-      if (response.success) {
-        setAddresses((prev) => [...prev, response.data]);
-        setIsAddDialogOpen(false);
-        resetForm();
-      }
+      // if (response.success) {
+      setAddresses((prev) => [...prev, response.data]);
+      setIsAddDialogOpen(false);
+      resetForm();
+      // }
     } catch (error) {
       console.error("Failed to add address:", error);
       alert("Failed to add address. Please try again.");
@@ -118,16 +119,16 @@ export default function AddressBook() {
         formData
       );
 
-      if (response.success) {
-        setAddresses((prev) =>
-          prev.map((addr) =>
-            addr.id === currentAddress.id ? response.data : addr
-          )
-        );
-        setIsEditDialogOpen(false);
-        setCurrentAddress(null);
-        resetForm();
-      }
+      // if (response.success) {
+      setAddresses((prev) =>
+        prev.map((addr) =>
+          addr.id === currentAddress.id ? response.data : addr
+        )
+      );
+      setIsEditDialogOpen(false);
+      setCurrentAddress(null);
+      resetForm();
+      // }
     } catch (error) {
       console.error("Failed to update address:", error);
       alert("Failed to update address. Please try again.");
@@ -158,14 +159,14 @@ export default function AddressBook() {
         {}
       );
 
-      if (response.success) {
-        setAddresses((prev) =>
-          prev.map((addr) => ({
-            ...addr,
-            is_default: addr.id === id,
-          }))
-        );
-      }
+      // if (response.success) {
+      setAddresses((prev) =>
+        prev.map((addr) => ({
+          ...addr,
+          is_default: addr.id === id,
+        }))
+      );
+      // }
     } catch (error) {
       console.error("Failed to set default address:", error);
       alert("Failed to set default address. Please try again.");
@@ -285,7 +286,7 @@ export default function AddressBook() {
       ) : addresses.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-textSecondary mb-4">
-            You don't have any saved addresses yet.
+            You don&apos;t have any saved addresses yet.
           </p>
           <Button
             onClick={() => setIsAddDialogOpen(true)}

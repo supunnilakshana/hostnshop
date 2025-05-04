@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/account/OrderHistory.tsx
-("use client");
+"use client";
 
 import {useState, useEffect} from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/presentation/components/ui/button";
 import {Eye, Package, TruckIcon, CheckCircle, AlertCircle} from "lucide-react";
-import {Badge} from "@/components/ui/badge";
+import {Badge} from "@/presentation/components/ui/badge";
 import {ReadOrderDTO} from "@/shared/dtos";
 import {orderService} from "@/lib/api/orderService";
 
@@ -146,7 +147,7 @@ export default function OrderHistory() {
       {orders.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-textSecondary mb-4">
-            You don't have any orders yet.
+            You don&apos;t have any orders yet.
           </p>
           <Button asChild className="bg-bg_primary hover:bg-btn_hover">
             <Link href="/products">Start Shopping</Link>

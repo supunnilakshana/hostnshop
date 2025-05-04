@@ -58,8 +58,8 @@ export default function NavBar() {
     {name: "Home", href: "/"},
     {name: "Shop", href: "/products"},
     {name: "Categories", href: "/categories"},
-    {name: "About", href: "/about"},
-    {name: "Contact", href: "/contact"},
+    {name: "About", href: "/about-us"},
+    {name: "Contact", href: "/contact-us"},
   ];
 
   return (

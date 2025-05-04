@@ -1,10 +1,10 @@
 // src/components/account/NotificationsSettings.tsx
-("use client");
+"use client";
 
 import {useState, useEffect} from "react";
-import {Switch} from "@/components/ui/switch";
-import {Label} from "@/components/ui/label";
-import {Button} from "@/components/ui/button";
+import {Switch} from "@/presentation/components/ui/switch";
+import {Label} from "@/presentation/components/ui/label";
+import {Button} from "@/presentation/components/ui/button";
 import {apiClient} from "@/lib/api/client";
 
 interface NotificationSettings {
@@ -44,9 +44,9 @@ export default function NotificationsSettings() {
         "notification-settings"
       );
 
-      if (response.success) {
-        setSettings(response.data);
-      }
+      // if (response.success) {
+      setSettings(response.data);
+      // }
     } catch (error) {
       console.error("Failed to fetch notification settings:", error);
     } finally {
