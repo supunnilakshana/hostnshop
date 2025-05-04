@@ -1,9 +1,9 @@
-import CategoryPage from "@/presentation/pages/categoryPage"
+import CategoryPage from "@/presentation/pages/admin/categoryPage";
 
-export default function Category(){
-    return (
-        <div>
-            <CategoryPage/>
-        </div>
-    )
+export default function Category() {
+  return (
+    <div>
+      <CategoryPage />
+    </div>
+  );
 }
