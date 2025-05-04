@@ -26,10 +26,10 @@ export default async function ProductsPage({searchParams}: ProductsPageProps) {
 
   // Fetch products based on search params
   const {data} = await productService.getProducts({
-    page,
-    limit,
-    categoryId,
-    search: searchQuery,
+    // page,
+    // limit,
+    // categoryId,
+    // search: searchQuery,
   });
 
   const products = data?.products || [];

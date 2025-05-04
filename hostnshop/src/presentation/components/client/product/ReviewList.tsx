@@ -3,7 +3,7 @@
 
 import {useState, useEffect} from "react";
 import {Star, ChevronDown, ChevronUp} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/presentation/components/ui/button";
 import {ReadReviewDTO} from "@/shared/dtos";
 import {reviewService} from "@/lib/api/reviewService";
 import {useAuthStore} from "@/lib/store/authStore";

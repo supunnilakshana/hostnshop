@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {usePathname} from "next/navigation";
 import {Bell, ShoppingCart, Menu, X, User, LogOut, Search} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/presentation/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +14,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/presentation/components/ui/dropdown-menu";
 import {useAuthStore} from "@/lib/store/authStore";
 import {useCartStore} from "@/lib/store/cartStore";
 import {useNotificationStore} from "@/lib/store/notificationStore";
@@ -22,11 +22,17 @@ import {useNotificationStore} from "@/lib/store/notificationStore";
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
 
   const {isAuthenticated, user, logout} = useAuthStore();
   const {totalItems} = useCartStore();
   const {unreadCount, fetchNotifications} = useNotificationStore();
+
+  // Set mounted state after hydration
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -108,7 +114,7 @@ export default function NavBar() {
               className="p-2 rounded-full hover:bg-grayLight relative"
             >
               <ShoppingCart className="h-5 w-5 text-textSecondary" />
-              {totalItems() > 0 && (
+              {isMounted && totalItems() > 0 && (
                 <span className="absolute -top-1 -right-1 bg-bg_primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                   {totalItems()}
                 </span>
@@ -121,7 +127,7 @@ export default function NavBar() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative">
                     <Bell className="h-5 w-5 text-textSecondary" />
-                    {unreadCount > 0 && (
+                    {isMounted && unreadCount > 0 && (
                       <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                         {unreadCount}
                       </span>
@@ -186,10 +192,10 @@ export default function NavBar() {
             ) : (
               <div className="hidden sm:flex space-x-2">
                 <Button asChild variant="ghost" size="sm">
-                  <Link href="/login">Login</Link>
+                  <Link href="/auth/login">Login</Link>
                 </Button>
                 <Button asChild size="sm">
-                  <Link href="/register">Register</Link>
+                  <Link href="/auth/register">Register</Link>
                 </Button>
               </div>
             )}

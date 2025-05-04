@@ -5,7 +5,7 @@ import {useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {Trash2, Plus, Minus} from "lucide-react";
-import {Button} from "@/components/ui/button";
+
 import {CartItem as CartItemType} from "@/lib/store/cartStore";
 import {useCartStore} from "@/lib/store/cartStore";
 

@@ -1,11 +1,11 @@
 // src/components/product/ProductFilter.tsx
-("use client");
+"use client";
 
 import {useState, useEffect} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
-import {Button} from "@/components/ui/button";
-import {Slider} from "@/components/ui/slider";
-import {Checkbox} from "@/components/ui/checkbox";
+import {Button} from "@/presentation/components/ui/button";
+import {Slider} from "@/presentation/components/ui/slider";
+import {Checkbox} from "@/presentation/components/ui/checkbox";
 import {FilterX, SlidersHorizontal} from "lucide-react";
 
 interface Category {

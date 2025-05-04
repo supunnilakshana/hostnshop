@@ -6,8 +6,9 @@ import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {useCartStore} from "@/lib/store/cartStore";
 import {useAuthStore} from "@/lib/store/authStore";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/presentation/components/ui/button";
 import {ArrowLeft} from "lucide-react";
+import CheckoutForm from "@/presentation/components/client/cart/cartCheckout";
 
 export default function CheckoutPage() {
   const router = useRouter();

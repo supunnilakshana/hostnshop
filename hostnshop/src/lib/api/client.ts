@@ -12,6 +12,23 @@ interface FetchOptions extends RequestInit {
  * API client for making HTTP requests to the backend API
  */
 export const apiClient = {
+  // Default base URL
+  baseUrl: "http://localhost:3000/api",
+
+  /**
+   * Set the base URL for all API requests
+   */
+  setBaseUrl(url: string): void {
+    this.baseUrl = url;
+  },
+
+  /**
+   * Get the current base URL
+   */
+  getBaseUrl(): string {
+    return this.baseUrl;
+  },
+
   /**
    * Base fetch method with authentication and refresh token handling
    */
@@ -25,8 +42,11 @@ export const apiClient = {
     const {accessToken, refreshToken, logout} = useAuthStore.getState();
     const headers = new Headers(fetchOptions.headers);
 
-    // Add content-type if not specified
-    if (!headers.has("Content-Type") && fetchOptions.body instanceof FormData) {
+    // Add content-type if not specified and body is not FormData
+    if (
+      !headers.has("Content-Type") &&
+      !(fetchOptions.body instanceof FormData)
+    ) {
       headers.set("Content-Type", "application/json");
     }
 
@@ -35,7 +55,10 @@ export const apiClient = {
       headers.set("Authorization", `Bearer ${accessToken}`);
     }
 
-    const response = await fetch(`/api/${endpoint}`, {
+    // Build the full URL with the base URL
+    const url = `${this.baseUrl}/${endpoint.replace(/^\//, "")}`;
+
+    const response = await fetch(url, {
       ...fetchOptions,
       headers,
     });
@@ -43,7 +66,7 @@ export const apiClient = {
     // Handle token refresh on 401 errors
     if (response.status === 401 && refreshOnUnauthorized && refreshToken) {
       try {
-        const refreshResponse = await fetch("/api/auth/refresh", {
+        const refreshResponse = await fetch(`${this.baseUrl}/auth/refresh`, {
           method: "POST",
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify({refreshToken}),

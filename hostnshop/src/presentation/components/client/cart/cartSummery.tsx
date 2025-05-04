@@ -5,8 +5,8 @@
 import {SetStateAction, useState} from "react";
 import {useRouter} from "next/navigation";
 import {ArrowRight, Check} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
+import {Button} from "@/presentation/components/ui/button";
+import {Input} from "@/presentation/components/ui/input";
 import {useCartStore} from "@/lib/store/cartStore";
 import {useAuthStore} from "@/lib/store/authStore";
 

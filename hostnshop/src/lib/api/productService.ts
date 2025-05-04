@@ -11,26 +11,31 @@ export const productService = {
       search?: string;
     } = {}
   ) {
-    const {page = 1, limit = 10, categoryId, search} = params;
+    try {
+      const {page = 1, limit = 10, categoryId, search} = params;
 
-    let endpoint = `products?page=${page}&limit=${limit}`;
+      let endpoint = `products?page=${page}&limit=${limit}`;
 
-    if (categoryId) {
-      endpoint += `&categoryId=${categoryId}`;
+      if (categoryId) {
+        endpoint += `&categoryId=${categoryId}`;
+      }
+
+      if (search) {
+        endpoint += `&search=${encodeURIComponent(search)}`;
+      }
+
+      return await apiClient.get<{
+        data: {
+          products: ReadProductDTO[];
+          total: number;
+          page: number;
+          totalPages: number;
+        };
+      }>(endpoint);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      throw new Error("Failed to fetch products");
     }
-
-    if (search) {
-      endpoint += `&search=${encodeURIComponent(search)}`;
-    }
-
-    return apiClient.get<{
-      data: {
-        products: ReadProductDTO[];
-        total: number;
-        page: number;
-        totalPages: number;
-      };
-    }>(endpoint);
   },
 
   async getProductById(id: string) {

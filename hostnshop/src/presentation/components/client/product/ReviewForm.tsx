@@ -3,8 +3,8 @@
 
 import {SetStateAction, useState} from "react";
 import {Star} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/presentation/components/ui/button";
+import {Textarea} from "@/presentation/components/ui/textarea";
 import {ReadReviewDTO} from "@/shared/dtos";
 import {reviewService} from "@/lib/api/reviewService";
 import {useAuthStore} from "@/lib/store/authStore";

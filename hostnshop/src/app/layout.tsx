@@ -2,9 +2,11 @@
 import type {Metadata} from "next";
 import {Inter} from "next/font/google";
 import "./globals.css";
-import NavBar from "@/presentation/components/header/NavBar";
+
 import Footer from "@/presentation/components/footer";
-import {Providers} from "@/lib/providers";
+
+import {Providers} from "@/lib/provider";
+import NavBar from "@/presentation/components/client/header/NavBar";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -24,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
           <div className="min-h-screen flex flex-col">

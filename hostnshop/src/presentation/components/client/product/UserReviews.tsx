@@ -4,7 +4,7 @@
 import {useState, useEffect} from "react";
 import Link from "next/link";
 import {Star, Pencil, Trash2} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/presentation/components/ui/button";
 import {ReadReviewDTO} from "@/shared/dtos";
 import {reviewService} from "@/lib/api/reviewService";
 import {apiClient} from "@/lib/api/client";

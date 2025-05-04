@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {useCartStore} from "@/lib/store/cartStore";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/presentation/components/ui/button";
 
 import {ShoppingCart, ArrowLeft} from "lucide-react";
 import CartSummary from "@/presentation/components/client/cart/cartSummery";

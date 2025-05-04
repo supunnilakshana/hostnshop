@@ -5,7 +5,7 @@ import {useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {ShoppingCart, Heart} from "lucide-react";
-import {Button} from "@/components/ui/button";
+import {Button} from "@/presentation/components/ui/button";
 import {ReadProductDTO} from "@/shared/dtos";
 import {useCartStore} from "@/lib/store/cartStore";
 

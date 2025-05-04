@@ -3,7 +3,12 @@
 
 import {useEffect} from "react";
 import {useRouter} from "next/navigation";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/presentation/components/ui/tabs";
 import {useAuthStore} from "@/lib/store/authStore";
 import ProfileForm from "@/presentation/components/account/ProfileForm";
 import OrderHistory from "@/presentation/components/account/OrderHistory";
