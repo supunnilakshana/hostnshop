@@ -17,7 +17,7 @@ import {productService} from "@/lib/api/productService";
 import {ReadProductDTO, ReadCategoryDTO} from "@/shared/dtos";
 import ProductCard from "@/presentation/components/client/product/ProductCard";
 
-export default function Home() {
+export default function ClientHomePage() {
   const [featuredProducts, setFeaturedProducts] = useState<ReadProductDTO[]>(
     []
   );

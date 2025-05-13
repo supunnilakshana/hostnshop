@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/presentation/components/admin/layout/AdminLayout.tsx
 "use client";
 
@@ -27,7 +28,7 @@ interface AdminLayoutProps {
 export default function AdminLayout({children}: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
-  const {logout} = useAuthStore();
+  const {isAuthenticated, user, logout} = useAuthStore();
 
   const navItems = [
     {

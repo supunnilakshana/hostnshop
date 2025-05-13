@@ -199,3 +199,20 @@ model Banners {
   created_at  DateTime  @default(now())
 }
 
+model File {
+  id            String   @id @default(uuid()) @db.Uuid
+  original_name String
+  file_name     String
+  mime_type     String
+  size          Int
+  path          String
+  entity_id     String?  @db.Uuid
+  entity_type   String
+  uploaded_by   String   @db.Uuid
+  uploaded_at   DateTime @default(now())
+
+ // user          User     @relation(fields: [uploaded_by], references: [id], onDelete: Cascade)
+  
+ 
+}
+
