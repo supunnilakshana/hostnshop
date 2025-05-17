@@ -380,7 +380,7 @@ export default function AdminDashBoardPage() {
           </div>
           <Button
             onClick={fetchDashboardData}
-            className="mt-2 md:mt-0 bg-bg_primary hover:bg-btn_hover"
+            className="mt-2 md:mt-0 bg-bg_primary hover:bg-btn_hover text-accent hover:text-accent"
           >
             <span className="sr-only">Refresh</span>
             <svg

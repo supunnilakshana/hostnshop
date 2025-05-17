@@ -23,7 +23,7 @@ const MainWrapper = ({ children }: { children: React.ReactNode }) => {
           <Sidebar isOpen={isSidebarOpen} />
         </div>
       )}
-      <div className="w-full h-screen overflow-y-auto no-scrollbar">
+      <div className="w-full h-screen overflow-y-auto no-scrollbar overflow-hidden">
         <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
         {children}
       </div>

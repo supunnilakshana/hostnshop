@@ -105,7 +105,7 @@ export default function AdminLayout({children}: AdminLayoutProps) {
           </div>
 
           {/* Sidebar navigation */}
-          <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+          <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto overflow-hidden">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -130,7 +130,7 @@ export default function AdminLayout({children}: AdminLayoutProps) {
           <div className="p-4 border-t border-gray-200">
             <Button
               variant="outline"
-              className="flex items-center w-full"
+              className="flex items-center w-full bg-bg_primary hover:bg-btn_hover text-accent hover:text-accent"
               onClick={handleLogout}
             >
               <LogOut className="w-4 h-4 mr-2" />
@@ -165,7 +165,7 @@ export default function AdminLayout({children}: AdminLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
+        <main className=" overflow-y-auto p-4 md:p-6 bg-gray-50 hide-scrollbar">
           {children}
         </main>
       </div>
