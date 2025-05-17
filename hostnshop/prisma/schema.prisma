@@ -206,9 +206,10 @@ model File {
   mime_type     String
   size          Int
   path          String
+  width         Int?
+  height        Int?
   entity_id     String?  @db.Uuid
-  entity_type   String
-  uploaded_by   String   @db.Uuid
+  uploaded_by   String?   @db.Uuid
   uploaded_at   DateTime @default(now())
 
  // user          User     @relation(fields: [uploaded_by], references: [id], onDelete: Cascade)
