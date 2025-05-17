@@ -3,7 +3,7 @@ FROM node:20-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-# Install dependencies needed for bcrypt and other native modules
+# Install dependencies needed for native modules and properly symlink python
 RUN apk add --no-cache libc6-compat python3 make g++ && \
     ln -sf /usr/bin/python3 /usr/bin/python
 WORKDIR /app
@@ -88,9 +88,15 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy package.json for reinstalling bcrypt
+# Copy package.json and lock file
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/package-lock.json ./package-lock.json
+
+# Copy the prisma directory including schema and migrations
+COPY --from=builder /app/prisma ./prisma/
+
+# Copy node_modules from builder (important to include the Prisma client)
+COPY --from=builder /app/node_modules ./node_modules
 
 # Create scripts directory
 RUN mkdir -p scripts
@@ -98,12 +104,11 @@ RUN mkdir -p scripts
 # Copy scripts and entrypoint script
 COPY --from=builder /app/scripts ./scripts/
 COPY --from=builder /app/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
 
-# Install only production deps and rebuild bcrypt specifically for the running architecture
-RUN npm ci --omit=dev && npm rebuild bcrypt --build-from-source
-
-# Copy prisma schema and migrations
-COPY --from=builder /app/prisma ./prisma/
+# Ensure that prisma gets regenerated in the runtime container
+RUN npx prisma generate
+RUN ls -la node_modules/.prisma/client
 
 USER nextjs
 

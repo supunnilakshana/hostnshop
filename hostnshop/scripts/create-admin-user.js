@@ -1,60 +1,74 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-// scripts/create-admin-user.js
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// Modified create-admin-user.js
+const {execSync} = require("child_process");
+const path = require("path");
+
+// Run prisma generate explicitly before using the client
+console.log("Generating Prisma client...");
+try {
+  execSync("npx prisma generate", {stdio: "inherit"});
+  console.log("Prisma client generated successfully");
+} catch (error) {
+  console.error("Error generating Prisma client:", error);
+  process.exit(1);
+}
+
+// Now import and use PrismaClient
 const {PrismaClient} = require("@prisma/client");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt"); // or bcryptjs if you switched
 
 const prisma = new PrismaClient();
 
+// Rest of your admin user creation logic
 async function createAdminUser() {
-  const adminEmail = process.env.ADMIN_EMAIL;
-  const adminPassword = process.env.ADMIN_PASSWORD;
-
-  if (!adminEmail || !adminPassword) {
-    console.log(
-      "Admin email or password not provided, skipping admin creation"
-    );
-    return;
-  }
-
   try {
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-      where: {email: adminEmail},
-    });
+    const email = process.env.ADMIN_EMAIL;
+    const password = process.env.ADMIN_PASSWORD;
 
-    const hashedPassword = await bcrypt.hash(adminPassword, 10);
+    if (!email || !password) {
+      console.log(
+        "Admin email or password not provided. Skipping admin user creation."
+      );
+      return;
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Check if admin user exists
+    const existingUser = await prisma.user.findUnique({
+      where: {email},
+    });
 
     if (existingUser) {
       // Update existing admin
       await prisma.user.update({
-        where: {email: adminEmail},
+        where: {email},
         data: {
-          password_hash: hashedPassword,
-          role: "Admin",
+          password: hashedPassword,
+          role: "ADMIN",
         },
       });
-      console.log(`Admin user ${adminEmail} updated successfully`);
+      console.log(`Updated admin user: ${email}`);
     } else {
-      // Create new admin
+      // Create new admin user
       await prisma.user.create({
         data: {
-          email: adminEmail,
-          name: "Admin User",
-          password_hash: hashedPassword,
-          role: "Admin",
-          phone_number: process.env.NEXT_PUBLIC_CONTACT_PHONE || "",
+          email,
+          password: hashedPassword,
+          role: "ADMIN",
+          name: "Admin",
         },
       });
-      console.log(`Admin user ${adminEmail} created successfully`);
+      console.log(`Created admin user: ${email}`);
     }
   } catch (error) {
     console.error("Error creating/updating admin user:", error);
+    process.exit(1);
   } finally {
     await prisma.$disconnect();
   }
 }
 
-createAdminUser().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+createAdminUser();
