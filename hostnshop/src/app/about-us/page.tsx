@@ -10,16 +10,19 @@ export default function AboutUs() {
     <div className="w-full">
       {/* Hero Section */}
       <section className="relative h-[400px] flex items-center">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/assets/images/about-hero.jpg"
-            alt="About HostNShop"
-            fill
-            priority
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-black/40" />
-        </div>
+      <div className="absolute inset-0 z-0 w-full h-full">
+      <Image
+        src="/assets/images/about-hero.jpg"
+        alt="About HostNShop"
+        fill
+        priority
+        quality={100}            
+        sizes="100vw"             
+        className="object-cover"
+      />
+      <div className="absolute inset-0 bg-black/40" />
+    </div>
+
 
         <div className="container mx-auto relative z-10 px-4 sm:px-6 lg:px-8">
           <div className="max-w-xl text-white">
@@ -60,13 +63,15 @@ export default function AboutUs() {
               </p>
             </div>
             <div className="relative h-[400px] rounded-lg overflow-hidden shadow-lg">
-              <Image
-                src="/assets/images/team.jpg"
-                alt="Our Team"
-                fill
-                className="object-cover"
-              />
-            </div>
+            <Image
+              src="/assets/images/team.jpg"
+              alt="Our Team"
+              fill
+              quality={100}           
+              sizes="100vw"           
+              className="object-cover"
+            />
+          </div>
           </div>
         </div>
       </section>
@@ -266,7 +271,7 @@ export default function AboutUs() {
               asChild
               size="lg"
               variant="outline"
-              className="text-white border-white hover:bg-white hover:text-bg_primary"
+              className="bg-white text-bg_primary hover:bg-gray-100"
             >
               <Link href="/contact">Contact Us</Link>
             </Button>

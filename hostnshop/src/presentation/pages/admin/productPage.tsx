@@ -303,7 +303,8 @@ export default function ProductPage() {
       image_url: product.image_url,
       category_id: product.category_id || undefined,
     });
-    setImagePreview(product.image_url);
+    // Fixed: Use getImageUrl to correctly display the image in preview
+    setImagePreview(getImageUrl(product.image_url));
     setIsEditMode(true);
     setIsOpen(true);
   };
@@ -384,7 +385,7 @@ export default function ProductPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Product Management</h1>
           <Button
-            className="bg-bg_primary hover:bg-btn_hover"
+            className="bg-bg_primary hover:bg-btn_hover text-accent"
             onClick={openCreateDialog}
           >
             <PlusCircle className="mr-2 h-4 w-4" />

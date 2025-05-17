@@ -53,16 +53,19 @@ export default function ClientHomePage() {
     <div className="w-full">
       {/* Hero Section */}
       <section className="relative h-[600px] flex items-center">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/assets/images/hero-banner.jpg"
-            alt="HostNShop"
-            fill
-            priority
-            className="object-cover opacity-90"
-          />
-          <div className="absolute inset-0 bg-black/30" />
-        </div>
+      <div className="absolute inset-0 z-0 w-full h-full">
+      <Image
+        src="/assets/images/hero-banner.jpg"
+        alt="hero banner"
+        fill
+        priority
+        quality={100}
+        sizes="100vw"
+        className="object-cover opacity-90"
+      />
+      <div className="absolute inset-0 bg-black/30" />
+    </div>
+
 
         <div className="container mx-auto relative z-10 px-4 sm:px-6 lg:px-8">
           <div className="max-w-xl text-white">
@@ -158,7 +161,7 @@ export default function ClientHomePage() {
           </div>
 
           <div className="text-center mt-10">
-            <Button asChild className="bg-bg_primary hover:bg-btn_hover">
+            <Button asChild className="bg-bg_primary hover:bg-btn_hover text-accent hover:text-accent">
               <Link href="/products" className="flex items-center">
                 View All Products <ChevronRight className="ml-1 h-4 w-4" />
               </Link>
@@ -241,10 +244,11 @@ export default function ClientHomePage() {
           </p>
           <Button
             size="lg"
+            asChild
             variant="outline"
-            className="text-white border-white hover:bg-white hover:text-bg_primary"
+            className="border-bg_primary text-bg_primary hover:bg-bg_primary hover:text-white hover:border hover:border-white"
           >
-            <Link href="/products">Shop Now</Link>
+            <Link href="/products" className="flex text-center">Shop Now</Link>
           </Button>
         </div>
       </section>
@@ -266,7 +270,7 @@ export default function ClientHomePage() {
                 placeholder="Your email address"
                 className="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bg_primary"
               />
-              <Button className="bg-bg_primary hover:bg-btn_hover">
+              <Button className="bg-bg_primary hover:bg-btn_hover text-accent hover:text-accent">
                 Subscribe
               </Button>
             </div>

@@ -8,6 +8,7 @@ import {ShoppingCart, Heart} from "lucide-react";
 import {Button} from "@/presentation/components/ui/button";
 import {ReadProductDTO} from "@/shared/dtos";
 import {useCartStore} from "@/lib/store/cartStore";
+import {getImageUrl} from "@/lib/utils/imageUtil";
 
 interface ProductCardProps {
   product: ReadProductDTO;
@@ -51,7 +52,7 @@ export default function ProductCard({product}: ProductCardProps) {
         )}
 
         <Image
-          src={product.image_url}
+          src={getImageUrl(product.image_url)}
           alt={product.name}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
