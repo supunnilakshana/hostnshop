@@ -5,10 +5,6 @@ import {OrderController} from "@/application/controllers/order.controller";
 
 const orderController = new OrderController();
 
-export async function PATCH(
-  req: NextRequest,
-
-  {params}: {params: {id: string}}
-): Promise<NextResponse> {
+export async function PATCH(req: NextRequest): Promise<NextResponse> {
   return orderController.updateOrderStatus(req);
 }

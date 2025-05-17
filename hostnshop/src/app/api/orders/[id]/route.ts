@@ -4,10 +4,6 @@ import {OrderController} from "@/application/controllers/order.controller";
 
 const orderController = new OrderController();
 
-export async function GET(
-  req: NextRequest,
-  {}: {params: {id: string}}
-): Promise<NextResponse> {
-  // We're not using params.id directly as the controller extracts it from pathname
+export async function GET(req: NextRequest): Promise<NextResponse> {
   return orderController.getOrderById(req);
 }

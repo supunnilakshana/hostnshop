@@ -1,7 +1,6 @@
-// src/app/register/page.tsx (complete version)
 "use client";
 
-import {useState, useEffect} from "react";
+import {useState, useEffect, Suspense} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,7 +11,8 @@ import {EyeIcon, EyeOffIcon} from "lucide-react";
 import {useAuthStore} from "@/lib/store/authStore";
 import {authService} from "@/lib/api/authService";
 
-export default function RegisterPage() {
+// Create a client component that uses useSearchParams
+function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
@@ -256,5 +256,26 @@ export default function RegisterPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+// Loading fallback component
+function RegisterLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+      <div className="max-w-md w-full space-y-8 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-bg_primary mx-auto"></div>
+        <p className="text-textSecondary">Loading registration form...</p>
+      </div>
+    </div>
+  );
+}
+
+// Main page component with Suspense
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<RegisterLoading />}>
+      <RegisterForm />
+    </Suspense>
   );
 }
