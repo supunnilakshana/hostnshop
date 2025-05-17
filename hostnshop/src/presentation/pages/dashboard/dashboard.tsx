@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { OrderList } from "./dashboard/orderList"
-import { IncomeTimeline } from "./dashboard/incomeTimeline"
-import Footer from "./footer"
+import {IncomeTimeline} from "@/presentation/components/dashboard/incomeTimeline";
+import {OrderList} from "@/presentation/components/dashboard/orderList";
+import Footer from "@/presentation/components/footer";
 
 export default function Dashboard() {
   return (
@@ -12,7 +12,7 @@ export default function Dashboard() {
           <h1 className="text-xl md:text-2xl font-semibold">Dashboard</h1>
         </div>
       </div>
-      
+
       <div className="flex-1 container mx-auto px-4 md:px-6 py-6 md:py-8">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-[2fr,1fr]">
           <OrderList />
@@ -20,8 +20,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <Footer/>
+      <Footer />
     </div>
-  )
+  );
 }
-

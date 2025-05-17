@@ -1,30 +1,22 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// src/app/layout.tsx
+import type {Metadata} from "next";
+import {Inter} from "next/font/google";
 import "./globals.css";
 
+import Footer from "@/presentation/components/footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import {Providers} from "@/lib/provider";
+import NavBar from "@/presentation/components/client/header/NavBar";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({subsets: ["latin"]});
 
 export const metadata: Metadata = {
-  title: "HostNShop",
-  description: "Your app description",
-  generator: "Next.js",
+  title: "HostNShop | Your One-Stop Online Shop",
+  description: "Premium products with excellent service",
   manifest: "/manifest.json",
-  keywords: ["nextjs", "next14", "pwa", "next-pwa"],
-  themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],
-  viewport:
-    "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
   icons: [
-    { rel: "apple-touch-icon", url: "icon-192x192.png" },
-    { rel: "icon", url: "icon-192x192.png" },
+    {rel: "icon", url: "assets/images/logo.png"},
+    {rel: "apple-touch-icon", url: "icons/icon-192x192.png"},
   ],
 };
 
@@ -34,14 +26,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-      
-        {children}
-        
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <Providers>
+          <div className="min-h-screen flex flex-col">
+            <NavBar />
+            <main className="flex-grow pt-16">{children}</main>
+            <Footer />
+          </div>
+        </Providers>
       </body>
     </html>
   );

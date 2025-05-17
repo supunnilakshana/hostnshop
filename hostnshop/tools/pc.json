@@ -1,0 +1,385 @@
+{
+  "info": {
+    "_postman_id": "e2a13d3f-5c47-4b11-98d5-5b632eaaf9f3",
+    "name": "HostNShop Storage API",
+    "description": "Collection of API endpoints for the HostNShop e-commerce platform's storage system.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "File Uploads",
+      "description": "Endpoints for uploading different types of files",
+      "item": [
+        {
+          "name": "Upload Product Image",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "entityType",
+                  "value": "product",
+                  "type": "text"
+                },
+                {
+                  "key": "entityId",
+                  "value": "{{product_id}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/storage/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "storage", "upload"]
+            },
+            "description": "Upload a product image that will be optimized to 1200x1200 max dimensions"
+          },
+          "response": []
+        },
+        {
+          "name": "Upload User Avatar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "entityType",
+                  "value": "avatar",
+                  "type": "text"
+                },
+                {
+                  "key": "entityId",
+                  "value": "{{user_id}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/storage/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "storage", "upload"]
+            },
+            "description": "Upload a user avatar that will be cropped to 256x256 square"
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Banner Image",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "entityType",
+                  "value": "banner",
+                  "type": "text"
+                },
+                {
+                  "key": "entityId",
+                  "value": "{{banner_id}}",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/storage/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "storage", "upload"]
+            },
+            "description": "Upload a banner image that will be optimized for 1920x600 dimensions"
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "entityType",
+                  "value": "document",
+                  "type": "text"
+                },
+                {
+                  "key": "entityId",
+                  "value": "{{order_id}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/storage/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "storage", "upload"]
+            },
+            "description": "Upload a document file (PDF, Word)"
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Import File",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "entityType",
+                  "value": "import",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/storage/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "storage", "upload"]
+            },
+            "description": "Upload a data import file (CSV, Excel)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "File Retrieval",
+      "description": "Endpoints for retrieving files",
+      "item": [
+        {
+          "name": "Get File by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/storage/files/{{file_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "storage", "files", "{{file_id}}"]
+            },
+            "description": "Retrieve a file by its ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Resized Image",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/storage/files/{{file_id}}?width=300&height=200",
+              "host": ["{{base_url}}"],
+              "path": ["api", "storage", "files", "{{file_id}}"],
+              "query": [
+                {
+                  "key": "width",
+                  "value": "300"
+                },
+                {
+                  "key": "height",
+                  "value": "200"
+                }
+              ]
+            },
+            "description": "Retrieve a resized version of an image"
+          },
+          "response": []
+        },
+        {
+          "name": "Download File",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/storage/files/{{file_id}}?download=true",
+              "host": ["{{base_url}}"],
+              "path": ["api", "storage", "files", "{{file_id}}"],
+              "query": [
+                {
+                  "key": "download",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Force download a file instead of viewing in browser"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Files by Entity",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/storage/files?entityType=product&entityId={{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "storage", "files"],
+              "query": [
+                {
+                  "key": "entityType",
+                  "value": "product"
+                },
+                {
+                  "key": "entityId",
+                  "value": "{{product_id}}"
+                }
+              ]
+            },
+            "description": "Get all files associated with a specific entity"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "File Management",
+      "description": "Endpoints for managing files",
+      "item": [
+        {
+          "name": "Delete File",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/storage/files/{{file_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "storage", "files", "{{file_id}}"]
+            },
+            "description": "Delete a file by its ID"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "your_jwt_token_here",
+      "type": "string"
+    },
+    {
+      "key": "file_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "product_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "banner_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "order_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

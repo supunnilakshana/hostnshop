@@ -1,12 +1,13 @@
-import HomePage from '@/presentation/pages/homePage'
-import React from 'react'
+import AdminDashBoardPage from "@/presentation/pages/admin/adminDashboardPage";
+
+import React from "react";
 
 function page() {
   return (
     <div>
-      <HomePage/>
+      <AdminDashBoardPage />
     </div>
-  )
+  );
 }
 
-export default page
+export default page;
