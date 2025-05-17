@@ -361,7 +361,7 @@ export default function ContactUs() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-bg_primary hover:bg-btn_hover"
+                  className="w-full bg-bg_primary hover:bg-btn_hover text-accent hover:text-accent"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Sending..." : "Send Message"}
@@ -446,7 +446,7 @@ export default function ContactUs() {
             </div>
 
             <div className="text-center mt-8">
-              <Button asChild className="bg-bg_primary hover:bg-btn_hover">
+              <Button asChild className="bg-bg_primary hover:bg-btn_hover text-accent hover:text-accent">
                 <Link href="/faq">View All FAQs</Link>
               </Button>
             </div>

@@ -165,7 +165,7 @@ export default function CategoryPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Category Management</h1>
           <Button
-            className="bg-bg_primary hover:bg-btn_hover"
+            className="bg-bg_primary hover:bg-btn_hover text-accent"
             onClick={openAddDialog}
           >
             <PlusCircle className="mr-2 h-4 w-4" />
