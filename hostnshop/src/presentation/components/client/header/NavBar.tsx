@@ -67,7 +67,7 @@ export default function NavBar() {
   const isAdmin = user?.role === UserRole.ADMIN;
 
   if (isAdmin) {
-    return <> </>;
+    return <></>;
   } else {
     return (
       // check if the user is authenticated and show the admin link

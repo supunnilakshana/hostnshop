@@ -46,18 +46,17 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   },
 
   fetchNotifications: async () => {
-    try {
-      const response = await fetch("/api/notifications");
-      const data = await response.json();
-
-      if (data.success) {
-        set({
-          notifications: data.data.notifications,
-          unreadCount: data.data.unreadCount,
-        });
-      }
-    } catch (error) {
-      console.error("Failed to fetch notifications:", error);
-    }
+    // try {
+    //   const response = await fetch("/api/notifications");
+    //   const data = await response.json();
+    //   if (data.success) {
+    //     set({
+    //       notifications: data.data.notifications,
+    //       unreadCount: data.data.unreadCount,
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.error("Failed to fetch notifications:", error);
+    // }
   },
 }));

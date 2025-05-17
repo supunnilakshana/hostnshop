@@ -33,6 +33,8 @@ export const apiClient = {
    * Base fetch method with authentication and refresh token handling
    */
   async fetch<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
+    console.log("Access Token:");
+
     const {
       token = true,
       refreshOnUnauthorized = true,
@@ -40,6 +42,10 @@ export const apiClient = {
     } = options;
 
     const {accessToken, refreshToken, logout} = useAuthStore.getState();
+
+    console.log("Access Token:" + accessToken);
+    console.log("Refresh Token:" + refreshToken);
+
     const headers = new Headers(fetchOptions.headers);
 
     // Add content-type if not specified and body is not FormData
@@ -122,6 +128,8 @@ export const apiClient = {
     data: any,
     options: FetchOptions = {}
   ): Promise<T> {
+    console.log("Access Token:1a");
+
     return this.fetch<T>(endpoint, {
       ...options,
       method: "POST",

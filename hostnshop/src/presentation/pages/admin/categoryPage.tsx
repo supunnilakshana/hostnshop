@@ -1,4 +1,4 @@
-// src/presentation/pages/categoryPage.tsx
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, {useState, useEffect} from "react";
@@ -30,12 +30,14 @@ import {
   UpdateCategoryDTO,
 } from "@/shared/dtos";
 import AdminLayout from "@/presentation/components/admin/layout/adminLayout";
+import {categoryService} from "@/lib/api/categoryService";
 
 export default function CategoryPage() {
   const [categories, setCategories] = useState<ReadCategoryDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentCategory, setCurrentCategory] =
     useState<ReadCategoryDTO | null>(null);
   const [categoryName, setCategoryName] = useState("");
@@ -54,14 +56,8 @@ export default function CategoryPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/categories");
-      const data = await response.json();
-
-      if (data.success) {
-        setCategories(data.data || []);
-      } else {
-        setError(data.message || "Failed to fetch categories");
-      }
+      const response = await categoryService.getCategories();
+      setCategories(response.data || []);
     } catch (err) {
       setError("An error occurred while fetching categories");
       console.error(err);
@@ -79,24 +75,12 @@ export default function CategoryPage() {
         name: categoryName.trim(),
       };
 
-      const response = await fetch("/api/categories", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(categoryData),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        await fetchCategories();
-        setCategoryName("");
-        setIsEditMode(false);
-        setCurrentCategory(null);
-      } else {
-        setError(data.message || "Failed to create category");
-      }
+      await categoryService.createCategory(categoryData);
+      await fetchCategories();
+      setCategoryName("");
+      setIsDialogOpen(false);
+      setIsEditMode(false);
+      setCurrentCategory(null);
     } catch (err) {
       setError("An error occurred while creating the category");
       console.error(err);
@@ -114,24 +98,12 @@ export default function CategoryPage() {
         name: categoryName.trim(),
       };
 
-      const response = await fetch(`/api/categories/${currentCategory.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(categoryData),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        await fetchCategories();
-        setCategoryName("");
-        setIsEditMode(false);
-        setCurrentCategory(null);
-      } else {
-        setError(data.message || "Failed to update category");
-      }
+      await categoryService.updateCategory(currentCategory.id, categoryData);
+      await fetchCategories();
+      setCategoryName("");
+      setIsDialogOpen(false);
+      setIsEditMode(false);
+      setCurrentCategory(null);
     } catch (err) {
       setError("An error occurred while updating the category");
       console.error(err);
@@ -145,19 +117,10 @@ export default function CategoryPage() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/categories/${categoryToDelete.id}`, {
-        method: "DELETE",
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        await fetchCategories();
-        setIsDeleting(false);
-        setCategoryToDelete(null);
-      } else {
-        setError(data.message || "Failed to delete category");
-      }
+      await categoryService.deleteCategory(categoryToDelete.id);
+      await fetchCategories();
+      setIsDeleting(false);
+      setCategoryToDelete(null);
     } catch (err) {
       setError("An error occurred while deleting the category");
       console.error(err);
@@ -166,10 +129,18 @@ export default function CategoryPage() {
     }
   };
 
+  const openAddDialog = () => {
+    setIsEditMode(false);
+    setCurrentCategory(null);
+    setCategoryName("");
+    setIsDialogOpen(true);
+  };
+
   const openEditDialog = (category: ReadCategoryDTO) => {
     setIsEditMode(true);
     setCurrentCategory(category);
     setCategoryName(category.name);
+    setIsDialogOpen(true);
   };
 
   const openDeleteDialog = (category: ReadCategoryDTO) => {
@@ -193,68 +164,13 @@ export default function CategoryPage() {
       <div className="container mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Category Management</h1>
-          <Dialog
-            open={isEditMode}
-            onOpenChange={(open) => !open && resetForm()}
+          <Button
+            className="bg-bg_primary hover:bg-btn_hover"
+            onClick={openAddDialog}
           >
-            <DialogTrigger asChild>
-              <Button className="bg-bg_primary hover:bg-btn_hover">
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Add Category
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  {isEditMode && currentCategory
-                    ? "Edit Category"
-                    : "Add New Category"}
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                {error && (
-                  <div className="bg-red-50 text-red-500 p-3 rounded-md flex items-start">
-                    <AlertCircle className="h-5 w-5 mr-2 mt-0.5" />
-                    <p>{error}</p>
-                  </div>
-                )}
-                <div className="space-y-2">
-                  <Label htmlFor="categoryName">Category Name</Label>
-                  <Input
-                    id="categoryName"
-                    value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
-                    placeholder="Enter category name"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline" onClick={resetForm}>
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <Button
-                  disabled={isSubmitting || !categoryName.trim()}
-                  onClick={
-                    isEditMode && currentCategory
-                      ? handleUpdateCategory
-                      : handleCreateCategory
-                  }
-                  className="bg-bg_primary hover:bg-btn_hover"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {isEditMode ? "Updating..." : "Creating..."}
-                    </>
-                  ) : (
-                    <>{isEditMode ? "Update" : "Create"}</>
-                  )}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Category
+          </Button>
         </div>
 
         {/* Search */}
@@ -322,6 +238,71 @@ export default function CategoryPage() {
         </div>
       </div>
 
+      {/* Add/Edit Category Dialog */}
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) resetForm();
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {isEditMode && currentCategory
+                ? "Edit Category"
+                : "Add New Category"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {error && (
+              <div className="bg-red-50 text-red-500 p-3 rounded-md flex items-start">
+                <AlertCircle className="h-5 w-5 mr-2 mt-0.5" />
+                <p>{error}</p>
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="categoryName">Category Name</Label>
+              <Input
+                id="categoryName"
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+                placeholder="Enter category name"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsDialogOpen(false);
+                resetForm();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={isSubmitting || !categoryName.trim()}
+              onClick={
+                isEditMode && currentCategory
+                  ? handleUpdateCategory
+                  : handleCreateCategory
+              }
+              className="bg-bg_primary hover:bg-btn_hover"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {isEditMode ? "Updating..." : "Creating..."}
+                </>
+              ) : (
+                <>{isEditMode ? "Update" : "Create"}</>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Delete Confirmation Dialog */}
       <Dialog
         open={isDeleting}
@@ -344,11 +325,9 @@ export default function CategoryPage() {
             )}
           </div>
           <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline" onClick={() => setIsDeleting(false)}>
-                Cancel
-              </Button>
-            </DialogClose>
+            <Button variant="outline" onClick={() => setIsDeleting(false)}>
+              Cancel
+            </Button>
             <Button
               variant="destructive"
               onClick={handleDeleteCategory}

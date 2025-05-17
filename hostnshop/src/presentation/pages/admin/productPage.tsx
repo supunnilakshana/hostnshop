@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/presentation/pages/productPage.tsx
 "use client";
 
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import {
   Table,
   TableBody,
@@ -20,14 +20,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
-  DialogClose,
 } from "@/presentation/components/ui/dialog";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -41,10 +38,12 @@ import {
   Search,
   Package,
   ImageIcon,
+  Upload,
+  X,
 } from "lucide-react";
 import {Label} from "@/presentation/components/ui/label";
-
 import {Badge} from "@/presentation/components/ui/badge";
+import {productService} from "@/lib/api/productService";
 import {
   CreateProductDTO,
   ReadProductDTO,
@@ -52,6 +51,8 @@ import {
   ReadCategoryDTO,
 } from "@/shared/dtos";
 import AdminLayout from "@/presentation/components/admin/layout/adminLayout";
+import {get} from "http";
+import {getImageUrl} from "@/lib/utils/imageUtil";
 
 interface ProductFormData {
   name: string;
@@ -91,6 +92,9 @@ export default function ProductPage() {
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(
     undefined
   );
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch products and categories
   useEffect(() => {
@@ -102,14 +106,9 @@ export default function ProductPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/products");
-      const data = await response.json();
+      const response = await productService.getProducts();
 
-      if (data.success) {
-        setProducts(data.data?.products || []);
-      } else {
-        setError(data.message || "Failed to fetch products");
-      }
+      setProducts(response.data.products || []);
     } catch (err) {
       setError("An error occurred while fetching products");
       console.error(err);
@@ -120,12 +119,9 @@ export default function ProductPage() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("/api/categories");
-      const data = await response.json();
+      const response = await productService.getCategories();
 
-      if (data.success) {
-        setCategories(data.data || []);
-      }
+      setCategories(response.data || []);
     } catch (err) {
       console.error("Error fetching categories:", err);
     }
@@ -157,6 +153,47 @@ export default function ProductPage() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      setError("Please upload a valid image file (JPEG, PNG, or WebP)");
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      setError("File size should not exceed 5MB");
+      return;
+    }
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImagePreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload file
+    setUploadingImage(true);
+    setError(null);
+    try {
+      const uploadedFile = await productService.uploadProductImage(file);
+      setFormData((prev) => ({
+        ...prev,
+        image_url: uploadedFile.path || "",
+      }));
+    } catch (err) {
+      console.error("Error uploading image:", err);
+      setError("Failed to upload image. Please try again.");
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -193,7 +230,7 @@ export default function ProductPage() {
       }
 
       if (!formData.image_url.trim()) {
-        setError("Image URL is required");
+        setError("Product image is required");
         setIsSubmitting(false);
         return;
       }
@@ -208,33 +245,23 @@ export default function ProductPage() {
         category_id: formData.category_id || undefined,
       };
 
-      const url =
-        isEditMode && currentProduct
-          ? `/api/products/${currentProduct.id}`
-          : "/api/products";
-
-      const method = isEditMode ? "PUT" : "POST";
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(productData),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        await fetchProducts();
-        resetForm();
-        setIsOpen(false);
+      let response;
+      if (isEditMode && currentProduct) {
+        response = await productService.updateProduct(
+          currentProduct.id,
+          productData as UpdateProductDTO
+        );
       } else {
-        setError(
-          data.message ||
-            `Failed to ${isEditMode ? "update" : "create"} product`
+        console.info("Creating product:", productData);
+
+        response = await productService.createProduct(
+          productData as CreateProductDTO
         );
       }
+
+      await fetchProducts();
+      resetForm();
+      setIsOpen(false);
     } catch (err) {
       setError(
         `An error occurred while ${
@@ -252,19 +279,11 @@ export default function ProductPage() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/products/${productToDelete.id}`, {
-        method: "DELETE",
-      });
+      const response = await productService.deleteProduct(productToDelete.id);
 
-      const data = await response.json();
-
-      if (data.success) {
-        await fetchProducts();
-        setIsDeleting(false);
-        setProductToDelete(null);
-      } else {
-        setError(data.message || "Failed to delete product");
-      }
+      await fetchProducts();
+      setIsDeleting(false);
+      setProductToDelete(null);
     } catch (err) {
       setError("An error occurred while deleting the product");
       console.error(err);
@@ -284,6 +303,7 @@ export default function ProductPage() {
       image_url: product.image_url,
       category_id: product.category_id || undefined,
     });
+    setImagePreview(product.image_url);
     setIsEditMode(true);
     setIsOpen(true);
   };
@@ -311,6 +331,21 @@ export default function ProductPage() {
     });
     setCurrentProduct(null);
     setError(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const removeImage = () => {
+    setFormData((prev) => ({
+      ...prev,
+      image_url: "",
+    }));
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   // Filter products
@@ -330,10 +365,10 @@ export default function ProductPage() {
   // Get stock status
   const getStockStatus = (quantity: number) => {
     if (quantity <= 0)
-      return {label: "Out of Stock", color: "bg_outofstock text_outofstock"};
+      return {label: "Out of Stock", color: "bg-red-100 text-red-800"};
     if (quantity < 10)
-      return {label: "Low Stock", color: "bg_lowstock text_lowstock"};
-    return {label: "In Stock", color: "bg_instock text_instock"};
+      return {label: "Low Stock", color: "bg-yellow-100 text-yellow-800"};
+    return {label: "In Stock", color: "bg-green-100 text-green-800"};
   };
 
   // Find category name by ID
@@ -368,8 +403,9 @@ export default function ProductPage() {
               className="pl-10"
             />
           </div>
-          <div>
-            {/* <Select
+          {/* Category filter - commented out in original code */}
+          {/* <div>
+            <Select
               value={categoryFilter}
               onValueChange={(value) => setCategoryFilter(value || undefined)}
             >
@@ -377,15 +413,15 @@ export default function ProductPage() {
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.name}
                   </SelectItem>
                 ))}
               </SelectContent>
-            </Select> */}
-          </div>
+            </Select>
+          </div> */}
         </div>
 
         {/* Products Table */}
@@ -418,7 +454,7 @@ export default function ProductPage() {
                           {product.image_url ? (
                             <div className="w-12 h-12 relative rounded overflow-hidden bg-gray-100">
                               <img
-                                src={product.image_url}
+                                src={getImageUrl(product.image_url)}
                                 alt={product.name}
                                 className="absolute inset-0 w-full h-full object-cover"
                                 onError={(e) => {
@@ -451,11 +487,7 @@ export default function ProductPage() {
                         </TableCell>
                         <TableCell>{product.stock_quantity}</TableCell>
                         <TableCell>
-                          <Badge
-                            className={`bg-${
-                              stockStatus.color.split(" ")[0]
-                            } text-${stockStatus.color.split(" ")[1]}`}
-                          >
+                          <Badge className={stockStatus.color}>
                             {stockStatus.label}
                           </Badge>
                         </TableCell>
@@ -544,7 +576,8 @@ export default function ProductPage() {
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Uncategorized</SelectItem>
+                    {/* Fixed: Changed empty string value to "uncategorized" */}
+                    <SelectItem value="uncategorized">Uncategorized</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.id}>
                         {category.name}
@@ -603,16 +636,50 @@ export default function ProductPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image_url">
-                  Image URL <span className="text-red-500">*</span>
+                <Label htmlFor="product_image">
+                  Product Image <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="image_url"
-                  name="image_url"
-                  value={formData.image_url}
-                  onChange={handleInputChange}
-                  placeholder="https://example.com/image.jpg"
-                />
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="product_image"
+                    name="product_image"
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={uploadingImage}
+                    className="flex-1"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    {uploadingImage ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="mr-2 h-4 w-4" />
+                        {imagePreview ? "Change Image" : "Upload Image"}
+                      </>
+                    )}
+                  </Button>
+                  {imagePreview && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="text-red-500 hover:text-red-700"
+                      onClick={removeImage}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-2 md:col-span-2">
@@ -629,12 +696,12 @@ export default function ProductPage() {
                 />
               </div>
 
-              {formData.image_url && (
+              {imagePreview && (
                 <div className="md:col-span-2">
                   <Label>Image Preview</Label>
-                  <div className="mt-2 h-40 border rounded-md overflow-hidden bg-gray-50 flex items-center justify-center">
+                  <div className="mt-2 h-60 border rounded-md overflow-hidden bg-gray-50 flex items-center justify-center">
                     <img
-                      src={formData.image_url}
+                      src={imagePreview}
                       alt="Product preview"
                       className="max-h-full max-w-full object-contain"
                       onError={(e) => {
@@ -652,7 +719,7 @@ export default function ProductPage() {
               Cancel
             </Button>
             <Button
-              disabled={isSubmitting}
+              disabled={isSubmitting || uploadingImage}
               onClick={handleSubmit}
               className="bg-bg_primary hover:bg-btn_hover"
             >
