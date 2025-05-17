@@ -27,9 +27,9 @@ export default function CartSummary() {
     return total + price * item.quantity;
   }, 0);
 
-  const estimatedTax = subtotal * 0.07;
   const shipping = subtotal > 100 ? 0 : 10;
-  const total = subtotal + estimatedTax + shipping;
+  const promoDiscount = promoCode ? 10 : 0;
+  const total = subtotal + shipping - promoDiscount;
 
   const handleApplyPromoCode = async () => {
     if (!promoInput.trim()) return;
@@ -72,13 +72,6 @@ export default function CartSummary() {
           </span>
           <span className="text-textPrimary font-medium">
             ${subtotal.toFixed(2)}
-          </span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="text-textSecondary">Estimated Tax</span>
-          <span className="text-textPrimary font-medium">
-            ${estimatedTax.toFixed(2)}
           </span>
         </div>
 
@@ -154,7 +147,6 @@ export default function CartSummary() {
       {/* Additional Info */}
       <div className="mt-4 text-xs text-center text-textSecondary">
         <p>Free shipping on orders over $100</p>
-        <p className="mt-1">Taxes calculated at checkout</p>
       </div>
     </div>
   );

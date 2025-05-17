@@ -1,4 +1,6 @@
-// src/components/checkout/CheckoutForm.tsx (complete version)
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// src/components/checkout/CheckoutForm.tsx (modified version)
 "use client";
 
 import {useState} from "react";
@@ -17,13 +19,40 @@ import {ShippingMethod, PaymentMethod, OrderStatus} from "@/shared/enums";
 import {CreateOrderDTO, CreateOrderItemDTO} from "@/shared/dtos";
 import {orderService} from "@/lib/api/orderService";
 
-export default function CheckoutForm() {
+export default function CheckoutForm({
+  onShippingMethodChange = (method: any) => {},
+}) {
   const router = useRouter();
   const {items, totalPrice, clearCart} = useCartStore();
   const {user} = useAuthStore();
 
   const [activeStep, setActiveStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Define shipping methods
+  const shippingMethods = [
+    {
+      id: ShippingMethod.STANDARD,
+      name: "Standard Shipping",
+      description: "Delivery in 5-7 business days",
+      cost: 0,
+      label: "Free",
+    },
+    {
+      id: ShippingMethod.EXPRESS,
+      name: "Express Shipping",
+      description: "Delivery in 2-3 business days",
+      cost: 12.99,
+      label: "$12.99",
+    },
+    {
+      id: ShippingMethod.OVERNIGHT,
+      name: "Overnight Shipping",
+      description: "Delivery next business day",
+      cost: 24.99,
+      label: "$24.99",
+    },
+  ];
 
   // Form state
   const [formData, setFormData] = useState({
@@ -51,6 +80,19 @@ export default function CheckoutForm() {
     notes: "",
   });
 
+  // Get selected shipping method details
+  const getSelectedShippingMethod = () => {
+    return (
+      shippingMethods.find((method) => method.id === formData.shippingMethod) ||
+      shippingMethods[0]
+    );
+  };
+
+  // Calculate final total
+  const calculateTotal = () => {
+    return totalPrice() + getSelectedShippingMethod().cost;
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -62,6 +104,11 @@ export default function CheckoutForm() {
 
   const handleRadioChange = (name: string, value: string) => {
     setFormData((prev) => ({...prev, [name]: value}));
+
+    // Notify parent component of shipping method changes
+    if (name === "shippingMethod") {
+      onShippingMethodChange(value);
+    }
   };
 
   const handleContinue = () => {
@@ -128,7 +175,9 @@ export default function CheckoutForm() {
 
       const orderData: CreateOrderDTO = {
         customer_id: user?.id || "",
-        total_price: totalPrice(),
+        total_price: calculateTotal(),
+        // shipping_cost: getSelectedShippingMethod().cost,
+        // shipping_method: formData.shippingMethod,
         status: OrderStatus.PENDING,
         orderItems: orderItems,
       };
@@ -311,38 +360,21 @@ export default function CheckoutForm() {
             }
             className="space-y-4"
           >
-            <div className="flex items-center space-x-2 border border-gray-200 p-4 rounded-md">
-              <RadioGroupItem value={ShippingMethod.STANDARD} id="standard" />
-              <Label htmlFor="standard" className="flex-1 cursor-pointer">
-                <div className="font-medium">Standard Shipping</div>
-                <div className="text-sm text-textSecondary">
-                  Delivery in 5-7 business days
-                </div>
-              </Label>
-              <div className="font-medium">Free</div>
-            </div>
-
-            <div className="flex items-center space-x-2 border border-gray-200 p-4 rounded-md">
-              <RadioGroupItem value={ShippingMethod.EXPRESS} id="express" />
-              <Label htmlFor="express" className="flex-1 cursor-pointer">
-                <div className="font-medium">Express Shipping</div>
-                <div className="text-sm text-textSecondary">
-                  Delivery in 2-3 business days
-                </div>
-              </Label>
-              <div className="font-medium">$12.99</div>
-            </div>
-
-            <div className="flex items-center space-x-2 border border-gray-200 p-4 rounded-md">
-              <RadioGroupItem value={ShippingMethod.OVERNIGHT} id="overnight" />
-              <Label htmlFor="overnight" className="flex-1 cursor-pointer">
-                <div className="font-medium">Overnight Shipping</div>
-                <div className="text-sm text-textSecondary">
-                  Delivery next business day
-                </div>
-              </Label>
-              <div className="font-medium">$24.99</div>
-            </div>
+            {shippingMethods.map((method) => (
+              <div
+                key={method.id}
+                className="flex items-center space-x-2 border border-gray-200 p-4 rounded-md"
+              >
+                <RadioGroupItem value={method.id} id={method.id} />
+                <Label htmlFor={method.id} className="flex-1 cursor-pointer">
+                  <div className="font-medium">{method.name}</div>
+                  <div className="text-sm text-textSecondary">
+                    {method.description}
+                  </div>
+                </Label>
+                <div className="font-medium">{method.label}</div>
+              </div>
+            ))}
           </RadioGroup>
 
           <div className="flex justify-between mt-6">
@@ -560,13 +592,10 @@ export default function CheckoutForm() {
             </div>
             <div className="text-sm text-textSecondary">
               <p>
-                {formData.shippingMethod === ShippingMethod.STANDARD &&
-                  "Standard Shipping (5-7 business days)"}
-                {formData.shippingMethod === ShippingMethod.EXPRESS &&
-                  "Express Shipping (2-3 business days)"}
-                {formData.shippingMethod === ShippingMethod.OVERNIGHT &&
-                  "Overnight Shipping (next business day)"}
+                {getSelectedShippingMethod().name} (
+                {getSelectedShippingMethod().description})
               </p>
+              <p>Cost: {getSelectedShippingMethod().label}</p>
             </div>
           </div>
 
@@ -630,47 +659,30 @@ export default function CheckoutForm() {
               </div>
               <div className="flex justify-between">
                 <span className="text-textSecondary">Shipping</span>
-                <span>
-                  {formData.shippingMethod === ShippingMethod.STANDARD &&
-                    "Free"}
-                  {formData.shippingMethod === ShippingMethod.EXPRESS &&
-                    "$12.99"}
-                  {formData.shippingMethod === ShippingMethod.OVERNIGHT &&
-                    "$24.99"}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-textSecondary">Tax</span>
-                <span>${(totalPrice() * 0.07).toFixed(2)}</span>
+                <span>{getSelectedShippingMethod().label}</span>
               </div>
               <div className="flex justify-between font-medium pt-2 border-t border-gray-200">
                 <span>Total</span>
                 <span className="text-bg_primary">
-                  $
-                  {(
-                    totalPrice() +
-                    (formData.shippingMethod === ShippingMethod.EXPRESS
-                      ? 12.99
-                      : formData.shippingMethod === ShippingMethod.OVERNIGHT
-                      ? 24.99
-                      : 0) +
-                    totalPrice() * 0.07
-                  ).toFixed(2)}
-                </span>
-                <span className="text-bg_primary">
-                  $
-                  {(
-                    totalPrice() +
-                    (formData.shippingMethod === ShippingMethod.EXPRESS
-                      ? 12.99
-                      : formData.shippingMethod === ShippingMethod.OVERNIGHT
-                      ? 24.99
-                      : 0) +
-                    totalPrice() * 0.07
-                  ).toFixed(2)}
+                  ${calculateTotal().toFixed(2)}
                 </span>
               </div>
             </div>
+          </div>
+
+          {/* Delivery Options */}
+          <div className="border border-gray-200 rounded-md p-4">
+            <h3 className="font-medium text-textPrimary mb-2">
+              Delivery Options
+            </h3>
+            <ul className="list-disc pl-5 text-sm text-textSecondary space-y-2">
+              {shippingMethods.map((method) => (
+                <li key={method.id}>
+                  <span className="font-medium">{method.name}:</span>{" "}
+                  {method.description} ({method.label})
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Order Notes */}

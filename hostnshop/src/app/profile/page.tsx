@@ -16,14 +16,15 @@ import AddressBook from "@/presentation/components/account/AddressBook";
 import UserReviews from "@/presentation/components/client/product/UserReviews";
 import NotificationsSettings from "@/presentation/components/account/NotificationsSettings";
 import PasswordChangeForm from "@/presentation/components/account/PasswordChangeForm";
+import {UserRole} from "@/shared/enums/auth.enum";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const {isAuthenticated} = useAuthStore();
+  const {isAuthenticated, user} = useAuthStore();
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/login?redirect=/profile");
+      router.push("/auth/login?redirect=/profile");
     }
   }, [isAuthenticated, router]);
 
@@ -37,6 +38,8 @@ export default function ProfilePage() {
     );
   }
 
+  const isAdmin = user?.role === UserRole.ADMIN;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <h1 className="text-3xl font-bold text-textPrimary mb-8">My Account</h1>
@@ -44,9 +47,14 @@ export default function ProfilePage() {
       <Tabs defaultValue="profile">
         <TabsList className="grid grid-cols-3 md:grid-cols-6 mb-8">
           <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="orders">Orders</TabsTrigger>
-          <TabsTrigger value="addresses">Addresses</TabsTrigger>
-          <TabsTrigger value="reviews">Reviews</TabsTrigger>
+          {/* show orders only for user */}
+          {!isAdmin && <TabsTrigger value="orders">Orders</TabsTrigger>}
+          {/* show addresses only for user */}
+          {!isAdmin && <TabsTrigger value="addresses">Addresses</TabsTrigger>}
+          {/* show reviews only for user */}
+          {!isAdmin && <TabsTrigger value="reviews">Reviews</TabsTrigger>}
+          {/* show notifications only for user */}
+
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
           <TabsTrigger value="password">Password</TabsTrigger>
         </TabsList>
@@ -55,17 +63,28 @@ export default function ProfilePage() {
           <ProfileForm />
         </TabsContent>
 
-        <TabsContent value="orders">
-          <OrderHistory />
-        </TabsContent>
+        {/* show orders only for user */}
+        {!isAdmin && (
+          <TabsContent value="orders">
+            <OrderHistory />
+          </TabsContent>
+        )}
 
-        <TabsContent value="addresses">
-          <AddressBook />
-        </TabsContent>
+        {/* show addresses only for user */}
+        {!isAdmin && (
+          <TabsContent value="addresses">
+            <AddressBook />
+          </TabsContent>
+        )}
 
-        <TabsContent value="reviews">
-          <UserReviews />
-        </TabsContent>
+        {/* show reviews only for user */}
+        {!isAdmin && (
+          <TabsContent value="reviews">
+            <UserReviews />
+          </TabsContent>
+        )}
+
+        {/* show notifications only for user */}
 
         <TabsContent value="notifications">
           <NotificationsSettings />

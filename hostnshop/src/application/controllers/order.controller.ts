@@ -4,6 +4,7 @@ import {BaseController} from "./base.controller";
 import {HttpStatus, OrderStatus, UserRole} from "@/shared/enums";
 import {OrderService} from "../services/order.service";
 import {CreateOrderDTO, UpdateOrderDTO} from "@/shared/dtos";
+import {log} from "console";
 
 export class OrderController extends BaseController {
   private orderService: OrderService;
@@ -100,7 +101,8 @@ export class OrderController extends BaseController {
     return this.handleRequest(
       req,
       async () => {
-        const id = req.nextUrl.pathname.split("/").pop();
+        const segments = req.nextUrl.pathname.split("/");
+        const id = segments[segments.length - 2];
         if (!id) {
           return this.sendError({
             message: "Order ID is required",
@@ -119,6 +121,9 @@ export class OrderController extends BaseController {
             statusCode: HttpStatus.BAD_REQUEST,
           });
         }
+
+        log("status", status);
+        log("id", id);
 
         return await this.orderService.updateOrderStatus(
           id,

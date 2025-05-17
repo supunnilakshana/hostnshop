@@ -59,7 +59,7 @@ export default function NavBar() {
   const navLinks = [
     {name: "Home", href: "/"},
     {name: "Shop", href: "/products"},
-    {name: "Categories", href: "/categories"},
+
     {name: "About", href: "/about-us"},
     {name: "Contact", href: "/contact-us"},
   ];
@@ -111,14 +111,13 @@ export default function NavBar() {
 
             {/* Action Icons */}
             <div className="flex items-center space-x-4">
-              {/* Search */}
+              {/* Search
               <Link
                 href="/search"
                 className="p-2 rounded-full hover:bg-grayLight"
               >
                 <Search className="h-5 w-5 text-textSecondary" />
-              </Link>
-
+              </Link> */}
               {/* Cart */}
               <Link
                 href="/cart"
@@ -131,7 +130,6 @@ export default function NavBar() {
                   </span>
                 )}
               </Link>
-
               {/* Notifications */}
               {isAuthenticated && (
                 <DropdownMenu>
@@ -165,7 +163,6 @@ export default function NavBar() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
-
               {/* User Menu */}
               {isAuthenticated ? (
                 <DropdownMenu>
@@ -184,18 +181,13 @@ export default function NavBar() {
                     <DropdownMenuItem asChild>
                       <Link href="/profile">
                         <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
+                        <span>Profile & Settings</span>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/orders">
-                        <ShoppingCart className="mr-2 h-4 w-4" />
-                        <span>Orders</span>
-                      </Link>
-                    </DropdownMenuItem>
+
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={logout} >
-                      <LogOut className="mr-2 h-4 w-4"  />
+                    <DropdownMenuItem onClick={logout}>
+                      <LogOut className="mr-2 h-4 w-4" />
                       <span>Log out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -210,7 +202,6 @@ export default function NavBar() {
                   </Button>
                 </div>
               )}
-
               {/* Mobile Menu Button */}
               <div className="flex md:hidden">
                 <Button

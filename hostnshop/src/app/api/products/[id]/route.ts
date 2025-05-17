@@ -7,3 +7,6 @@ const productController = new ProductController();
 export async function DELETE(req: NextRequest) {
   return await productController.deleteProduct(req);
 }
+export async function GET(req: NextRequest) {
+  return await productController.getProductById(req);
+}

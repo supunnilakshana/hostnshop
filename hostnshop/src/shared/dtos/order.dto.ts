@@ -26,7 +26,7 @@ export interface ReadOrderDTO {
   customer_id: string;
   total_price: number;
   status: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
-  // items: ReadOrderItemDTO[];
+  items: ReadOrderItemDTO[];
   created_at: string;
 }
 

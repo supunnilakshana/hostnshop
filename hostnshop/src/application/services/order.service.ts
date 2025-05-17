@@ -74,6 +74,13 @@ export class OrderService {
         }
       }
 
+      // // remove order_id filed from order items
+      // // const orderItems: CreateOrderItemDTO[] = orderData.orderItems.map((item) => {
+
+      // //   const {order_id, ...rest} = item;
+      // //   return rest;
+      // // }
+      // );
       // Create order and order items
       const order = await this.orderRepository.create(
         orderData,

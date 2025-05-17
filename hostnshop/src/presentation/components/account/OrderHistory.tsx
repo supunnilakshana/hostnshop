@@ -1,23 +1,22 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/account/OrderHistory.tsx
 "use client";
 
 import {useState, useEffect} from "react";
 import Link from "next/link";
-import {useRouter} from "next/navigation";
 import {Button} from "@/presentation/components/ui/button";
 import {Eye, Package, TruckIcon, CheckCircle, AlertCircle} from "lucide-react";
 import {Badge} from "@/presentation/components/ui/badge";
 import {ReadOrderDTO} from "@/shared/dtos";
 import {orderService} from "@/lib/api/orderService";
+import OrderDetailsModal from "./OrderDetailsModal";
 
 export default function OrderHistory() {
-  const router = useRouter();
   const [orders, setOrders] = useState<ReadOrderDTO[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchOrders(currentPage);
@@ -111,6 +110,14 @@ export default function OrderHistory() {
     }
   };
 
+  const handleViewOrder = (orderId: string) => {
+    setSelectedOrderId(orderId);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedOrderId(null);
+  };
+
   if (isLoading && orders.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
@@ -182,15 +189,13 @@ export default function OrderHistory() {
                   </div>
 
                   <Button
-                    asChild
                     variant="outline"
                     size="sm"
                     className="mt-3 md:mt-0"
+                    onClick={() => handleViewOrder(order.id)}
                   >
-                    <Link href={`/orders/${order.id}`}>
-                      <Eye className="mr-2 h-4 w-4" />
-                      View Details
-                    </Link>
+                    <Eye className="mr-2 h-4 w-4" />
+                    View Details
                   </Button>
                 </div>
               </div>
@@ -240,6 +245,18 @@ export default function OrderHistory() {
             </div>
           )}
         </>
+      )}
+
+      {/* Order Details Modal */}
+      {selectedOrderId && (
+        <OrderDetailsModal
+          orderId={selectedOrderId}
+          onClose={() => {
+            handleCloseModal();
+            // Refresh the orders list when modal is closed (in case of changes)
+            fetchOrders(currentPage);
+          }}
+        />
       )}
     </div>
   );

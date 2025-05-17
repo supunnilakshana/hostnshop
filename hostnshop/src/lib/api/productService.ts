@@ -14,20 +14,55 @@ export const productService = {
       limit?: number;
       categoryId?: string;
       search?: string;
+      minPrice?: number;
+      maxPrice?: number;
+      inStock?: boolean;
+      onSale?: boolean;
     } = {}
   ) {
     try {
-      const {page = 1, limit = 10, categoryId, search} = params;
+      // Start building the endpoint with required parameters
+      const {
+        page = 1,
+        limit = 10,
+        categoryId,
+        search,
+        minPrice,
+        maxPrice,
+        inStock,
+        onSale,
+      } = params;
 
-      let endpoint = `products?page=${page}&limit=${limit}`;
+      const queryParams = new URLSearchParams();
+      queryParams.append("page", page.toString());
+      queryParams.append("limit", limit.toString());
 
+      // Add optional parameters if they exist
       if (categoryId) {
-        endpoint += `&categoryId=${categoryId}`;
+        queryParams.append("categoryId", categoryId);
       }
 
       if (search) {
-        endpoint += `&search=${encodeURIComponent(search)}`;
+        queryParams.append("search", search);
       }
+
+      if (minPrice !== undefined) {
+        queryParams.append("minPrice", minPrice.toString());
+      }
+
+      if (maxPrice !== undefined) {
+        queryParams.append("maxPrice", maxPrice.toString());
+      }
+
+      if (inStock !== undefined) {
+        queryParams.append("inStock", inStock.toString());
+      }
+
+      if (onSale !== undefined) {
+        queryParams.append("onSale", onSale.toString());
+      }
+
+      const endpoint = `products?${queryParams.toString()}`;
 
       return await apiClient.get<{
         data: {
@@ -44,11 +79,55 @@ export const productService = {
   },
 
   async getProductById(id: string) {
-    return apiClient.get<{data: ReadProductDTO}>(`products/${id}`);
+    try {
+      return await apiClient.get<{data: ReadProductDTO}>(`products/${id}`);
+    } catch (error) {
+      console.error(`Error fetching product with ID ${id}:`, error);
+      throw new Error("Failed to fetch product details");
+    }
   },
 
   async getCategories() {
-    return apiClient.get<{data: ReadCategoryDTO[]}>("categories");
+    try {
+      return await apiClient.get<{data: ReadCategoryDTO[]}>("categories");
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      throw new Error("Failed to fetch categories");
+    }
+  },
+
+  async createProduct(productData: CreateProductDTO) {
+    try {
+      return await apiClient.post<{
+        data: ReadProductDTO;
+      }>("products", productData, {
+        token: true,
+      });
+    } catch (error) {
+      console.error("Error creating product:", error);
+      throw new Error("Failed to create product");
+    }
+  },
+
+  async updateProduct(id: string, productData: UpdateProductDTO) {
+    try {
+      return await apiClient.put<{data: ReadProductDTO}>(
+        `products/${id}`,
+        productData
+      );
+    } catch (error) {
+      console.error(`Error updating product with ID ${id}:`, error);
+      throw new Error("Failed to update product");
+    }
+  },
+
+  async deleteProduct(id: string) {
+    try {
+      return await apiClient.delete<{success: boolean}>(`products/${id}`);
+    } catch (error) {
+      console.error(`Error deleting product with ID ${id}:`, error);
+      throw new Error("Failed to delete product");
+    }
   },
 
   async uploadProductImage(file: File) {
@@ -63,7 +142,7 @@ export const productService = {
       });
 
       if (!response.ok) {
-        throw new Error("File upload failed");
+        throw new Error(`File upload failed: ${response.status}`);
       }
 
       const data = await response.json();
@@ -74,19 +153,38 @@ export const productService = {
     }
   },
 
-  async createProduct(productData: CreateProductDTO) {
-    return apiClient.post<{
-      data: ReadProductDTO;
-    }>("products", productData, {
-      token: true,
-    });
+  async updateInventory(id: string, stockQuantity: number) {
+    try {
+      return await apiClient.put<{data: ReadProductDTO}>(
+        `products/${id}/inventory`,
+        {stock_quantity: stockQuantity}
+      );
+    } catch (error) {
+      console.error(`Error updating inventory for product ${id}:`, error);
+      throw new Error("Failed to update product inventory");
+    }
   },
 
-  async updateProduct(id: string, productData: UpdateProductDTO) {
-    return apiClient.put<{data: ReadProductDTO}>(`products/${id}`, productData);
+  async updateDiscount(id: string, discountPercentage: number) {
+    try {
+      return await apiClient.put<{data: ReadProductDTO}>(
+        `products/${id}/discount`,
+        {discount_percentage: discountPercentage}
+      );
+    } catch (error) {
+      console.error(`Error updating discount for product ${id}:`, error);
+      throw new Error("Failed to update product discount");
+    }
   },
 
-  async deleteProduct(id: string) {
-    return apiClient.delete<{success: boolean}>(`products/${id}`);
+  async getLowStockProducts(threshold: number = 5) {
+    try {
+      return await apiClient.get<{
+        data: ReadProductDTO[];
+      }>(`products/low-stock?threshold=${threshold}`);
+    } catch (error) {
+      console.error(`Error fetching low stock products:`, error);
+      throw new Error("Failed to fetch low stock products");
+    }
   },
 };

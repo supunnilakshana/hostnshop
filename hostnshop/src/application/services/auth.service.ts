@@ -43,7 +43,7 @@ export class AuthService {
       // Create user with default role
       const user = await this.userRepository.create({
         password_hash: hashedPassword,
-        role: "Admin",
+        role: "Customer",
         name: `${data.firstName} ${data.lastName}`,
         email: data.email,
         phone_number: "",
