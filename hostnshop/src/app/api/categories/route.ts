@@ -10,10 +10,3 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   return await categoryController.createCategory(req);
 }
-
-export async function PUT(req: NextRequest) {
-  return await categoryController.updateCategory(req);
-}
-export async function DELETE(req: NextRequest) {
-  return await categoryController.deleteCategory(req);
-}
