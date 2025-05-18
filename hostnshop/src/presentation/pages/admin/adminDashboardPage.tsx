@@ -1,7 +1,8 @@
+// src/app/admin/dashboard/page.tsx
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/presentation/pages/client/clientHomePage.tsx
+
 "use client";
 
 import React, {useState, useEffect} from "react";
@@ -55,33 +56,13 @@ import {
 import {OrderStatus} from "@/shared/enums";
 import {ReadProductDTO} from "@/shared/dtos";
 import AdminLayout from "@/presentation/components/admin/layout/adminLayout";
-
-interface DashboardSummary {
-  totalRevenue: number;
-  totalOrders: number;
-  totalCustomers: number;
-  totalProducts: number;
-  revenueChange: number;
-  ordersChange: number;
-  customersChange: number;
-  productsChange: number;
-}
-
-interface OrderSummary {
-  id: string;
-  customer: {
-    name: string;
-    email: string;
-  };
-  total_price: number;
-  status: OrderStatus;
-  created_at: string;
-}
-
-interface RecentAnalytics {
-  revenueByDay: {date: string; revenue: number}[];
-  ordersByStatus: {status: string; count: number}[];
-}
+import {
+  dashboardService,
+  DashboardSummary,
+  OrderSummary,
+  RecentAnalytics,
+} from "@/lib/api/dashboardService";
+import {getImageUrl} from "@/lib/utils/imageUtil";
 
 export default function AdminDashBoardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -116,27 +97,9 @@ export default function AdminDashBoardPage() {
   const fetchSummary = async () => {
     setLoading((prev) => ({...prev, summary: true}));
     try {
-      // In a real app, this would be an API call
-      // const response = await fetch('/api/admin/dashboard/summary');
-      // const data = await response.json();
-
-      // Mocked data for demo
-      const data = {
-        success: true,
-        data: {
-          totalRevenue: 15789.42,
-          totalOrders: 128,
-          totalCustomers: 85,
-          totalProducts: 64,
-          revenueChange: 12.3,
-          ordersChange: 8.7,
-          customersChange: 5.2,
-          productsChange: -2.1,
-        },
-      };
-
-      if (data.success) {
-        setSummary(data.data);
+      const response = await dashboardService.getDashboardSummary();
+      if (response.data) {
+        setSummary(response.data);
       }
     } catch (err) {
       console.error("Error fetching summary:", err);
@@ -148,58 +111,9 @@ export default function AdminDashBoardPage() {
   const fetchRecentOrders = async () => {
     setLoading((prev) => ({...prev, recentOrders: true}));
     try {
-      // In a real app, this would be an API call
-      // const response = await fetch('/api/admin/dashboard/recent-orders');
-      // const data = await response.json();
-
-      // Mocked data for demo
-      const data = {
-        success: true,
-        data: [
-          {
-            id: "ord_123456",
-            customer: {name: "John Doe", email: "john@example.com"},
-            total_price: 129.99,
-            status: OrderStatus.PENDING,
-            created_at: new Date().toISOString(),
-          },
-          {
-            id: "ord_123457",
-            customer: {name: "Jane Smith", email: "jane@example.com"},
-            total_price: 245.5,
-            status: OrderStatus.PROCESSING,
-            created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: "ord_123458",
-            customer: {name: "Bob Johnson", email: "bob@example.com"},
-            total_price: 78.25,
-            status: OrderStatus.SHIPPED,
-            created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: "ord_123459",
-            customer: {name: "Alice Brown", email: "alice@example.com"},
-            total_price: 189.0,
-            status: OrderStatus.DELIVERED,
-            created_at: new Date(
-              Date.now() - 12 * 60 * 60 * 1000
-            ).toISOString(),
-          },
-          {
-            id: "ord_123460",
-            customer: {name: "Charlie Wilson", email: "charlie@example.com"},
-            total_price: 56.75,
-            status: OrderStatus.CANCELLED,
-            created_at: new Date(
-              Date.now() - 24 * 60 * 60 * 1000
-            ).toISOString(),
-          },
-        ],
-      };
-
-      if (data.success) {
-        setRecentOrders(data.data);
+      const response = await dashboardService.getRecentOrders(5);
+      if (response.data) {
+        setRecentOrders(response.data);
       }
     } catch (err) {
       console.error("Error fetching recent orders:", err);
@@ -211,52 +125,9 @@ export default function AdminDashBoardPage() {
   const fetchLowStockProducts = async () => {
     setLoading((prev) => ({...prev, lowStockProducts: true}));
     try {
-      // In a real app, this would be an API call
-      // const response = await fetch('/api/admin/products/low-stock');
-      // const data = await response.json();
-
-      // Mocked data for demo
-      const data = {
-        success: true,
-        data: [
-          {
-            id: "prod_1",
-            name: "Smartphone X",
-            description: "Latest smartphone model",
-            price: 899.99,
-            discount_percentage: 10,
-            stock_quantity: 3,
-            image_url: "/assets/images/smartphone.jpg",
-            category_id: "cat_1",
-            created_at: new Date().toISOString(),
-          },
-          {
-            id: "prod_2",
-            name: "Wireless Headphones",
-            description: "Noise-cancelling wireless headphones",
-            price: 199.99,
-            discount_percentage: 0,
-            stock_quantity: 5,
-            image_url: "/assets/images/headphones.jpg",
-            category_id: "cat_2",
-            created_at: new Date().toISOString(),
-          },
-          {
-            id: "prod_3",
-            name: "Smart Watch",
-            description: "Fitness tracking smart watch",
-            price: 249.99,
-            discount_percentage: 15,
-            stock_quantity: 2,
-            image_url: "/assets/images/smartwatch.jpg",
-            category_id: "cat_1",
-            created_at: new Date().toISOString(),
-          },
-        ],
-      };
-
-      if (data.success) {
-        setLowStockProducts(data.data);
+      const response = await dashboardService.getLowStockProducts(5);
+      if (response.data) {
+        setLowStockProducts(response.data);
       }
     } catch (err) {
       console.error("Error fetching low stock products:", err);
@@ -268,62 +139,9 @@ export default function AdminDashBoardPage() {
   const fetchAnalytics = async (timeframe: string) => {
     setLoading((prev) => ({...prev, analytics: true}));
     try {
-      // In a real app, this would be an API call
-      // const response = await fetch(`/api/admin/dashboard/analytics?timeframe=${timeframe}`);
-      // const data = await response.json();
-
-      // Mocked data for demo
-      let revenueByDay;
-      if (timeframe === "week") {
-        revenueByDay = [
-          {date: "Monday", revenue: 1200},
-          {date: "Tuesday", revenue: 1800},
-          {date: "Wednesday", revenue: 1400},
-          {date: "Thursday", revenue: 2200},
-          {date: "Friday", revenue: 2800},
-          {date: "Saturday", revenue: 3200},
-          {date: "Sunday", revenue: 2600},
-        ];
-      } else if (timeframe === "month") {
-        revenueByDay = [
-          {date: "Week 1", revenue: 8400},
-          {date: "Week 2", revenue: 9200},
-          {date: "Week 3", revenue: 10500},
-          {date: "Week 4", revenue: 11000},
-        ];
-      } else {
-        revenueByDay = [
-          {date: "Jan", revenue: 25000},
-          {date: "Feb", revenue: 28000},
-          {date: "Mar", revenue: 32000},
-          {date: "Apr", revenue: 34000},
-          {date: "May", revenue: 38000},
-          {date: "Jun", revenue: 42000},
-          {date: "Jul", revenue: 45000},
-          {date: "Aug", revenue: 48000},
-          {date: "Sep", revenue: 51000},
-          {date: "Oct", revenue: 54000},
-          {date: "Nov", revenue: 58000},
-          {date: "Dec", revenue: 62000},
-        ];
-      }
-
-      const data = {
-        success: true,
-        data: {
-          revenueByDay,
-          ordersByStatus: [
-            {status: "Pending", count: 25},
-            {status: "Processing", count: 42},
-            {status: "Shipped", count: 38},
-            {status: "Delivered", count: 78},
-            {status: "Cancelled", count: 12},
-          ],
-        },
-      };
-
-      if (data.success) {
-        setAnalytics(data.data);
+      const response = await dashboardService.getAnalytics(timeframe);
+      if (response.data) {
+        setAnalytics(response.data);
       }
     } catch (err) {
       console.error("Error fetching analytics:", err);
@@ -619,11 +437,11 @@ export default function AdminDashBoardPage() {
                         tickMargin={10}
                       />
                       <YAxis
-                        tickFormatter={(value: any) => `${value}`}
+                        tickFormatter={(value: any) => `$${value}`}
                         tick={{fontSize: 12}}
                       />
                       <Tooltip
-                        formatter={(value: any) => [`${value}`, "Revenue"]}
+                        formatter={(value: any) => [`$${value}`, "Revenue"]}
                         labelFormatter={(label: any) => `Date: ${label}`}
                       />
                       <Line
@@ -669,7 +487,6 @@ export default function AdminDashBoardPage() {
                         <TableHead>Order</TableHead>
                         <TableHead>Customer</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -792,13 +609,13 @@ export default function AdminDashBoardPage() {
                           <div className="flex items-center">
                             <div className="w-10 h-10 relative rounded overflow-hidden bg-gray-100 mr-3">
                               <img
-                                src={product.image_url}
+                                src={getImageUrl(product.image_url)}
                                 alt={product.name}
                                 className="absolute inset-0 w-full h-full object-cover"
-                                // onError={(e) => {
-                                //   const target = e.target as HTMLImageElement;
-                                //   // target.src = "/assets/images/placeholder.png";
-                                // }}
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.src = "/assets/images/placeholder.png";
+                                }}
                               />
                             </div>
                             <div className="font-medium max-w-[200px] truncate">
