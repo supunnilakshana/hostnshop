@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// src/presentation/components/header/NavBar.tsx
 "use client";
 
 import {useState, useEffect} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {usePathname} from "next/navigation";
-import {Bell, ShoppingCart, Menu, X, User, LogOut, Search} from "lucide-react";
+import {Bell, ShoppingCart, Menu, X, User, LogOut,} from "lucide-react";
 import {Button} from "@/presentation/components/ui/button";
 import {
   DropdownMenu,
@@ -59,7 +57,6 @@ export default function NavBar() {
   const navLinks = [
     {name: "Home", href: "/"},
     {name: "Shop", href: "/products"},
-
     {name: "About", href: "/about-us"},
     {name: "Contact", href: "/contact-us"},
   ];
@@ -70,13 +67,11 @@ export default function NavBar() {
     return <></>;
   } else {
     return (
-      // check if the user is authenticated and show the admin link
-
       <header
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${
           isScrolled
-            ? "bg-white/95 backdrop-blur-sm shadow-sm"
-            : "bg-transparent"
+            ? "bg-white/95 backdrop-blur-sm shadow-sm text-textSecondary"
+            : "bg-transparent text-white"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,7 +96,7 @@ export default function NavBar() {
                   className={`text-sm font-medium transition-colors hover:text-bg_primary ${
                     pathname === link.href
                       ? "text-bg_primary"
-                      : "text-textSecondary"
+                      : isScrolled ? "text-textSecondary" : "text-white"
                   }`}
                 >
                   {link.name}
@@ -111,19 +106,12 @@ export default function NavBar() {
 
             {/* Action Icons */}
             <div className="flex items-center space-x-4">
-              {/* Search
-              <Link
-                href="/search"
-                className="p-2 rounded-full hover:bg-grayLight"
-              >
-                <Search className="h-5 w-5 text-textSecondary" />
-              </Link> */}
               {/* Cart */}
               <Link
                 href="/cart"
                 className="p-2 rounded-full hover:bg-grayLight relative"
               >
-                <ShoppingCart className="h-5 w-5 text-textSecondary" />
+                <ShoppingCart className={`h-5 w-5 ${isScrolled ? "text-textSecondary" : "text-white"}`} />
                 {isMounted && totalItems() > 0 && (
                   <span className="absolute -top-1 -right-1 bg-bg_primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                     {totalItems()}
@@ -135,7 +123,7 @@ export default function NavBar() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="relative">
-                      <Bell className="h-5 w-5 text-textSecondary" />
+                      <Bell className={`h-5 w-5 ${isScrolled ? "text-textSecondary" : "text-white"}`} />
                       {isMounted && unreadCount > 0 && (
                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                           {unreadCount}
@@ -194,7 +182,7 @@ export default function NavBar() {
                 </DropdownMenu>
               ) : (
                 <div className="hidden sm:flex space-x-2">
-                  <Button asChild variant="ghost" size="sm">
+                  <Button asChild variant="ghost" size="sm" className={isScrolled ? "" : "text-white hover:text-white"}>
                     <Link href="/auth/login">Login</Link>
                   </Button>
                   <Button asChild size="sm">
@@ -208,7 +196,7 @@ export default function NavBar() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="text-gray-500"
+                  className={isScrolled ? "text-gray-500" : "text-white"}
                 >
                   {isMenuOpen ? (
                     <X className="h-6 w-6" />
@@ -241,13 +229,13 @@ export default function NavBar() {
               {!isAuthenticated && (
                 <>
                   <Link
-                    href="/login"
+                    href="/auth/login"
                     className="block px-3 py-2 rounded-md text-base font-medium text-textSecondary hover:bg-grayLight"
                   >
                     Login
                   </Link>
                   <Link
-                    href="/register"
+                    href="/auth/register"
                     className="block px-3 py-2 rounded-md text-base font-medium text-textSecondary hover:bg-grayLight"
                   >
                     Register

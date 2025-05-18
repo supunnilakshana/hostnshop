@@ -8,6 +8,7 @@ import {Trash2, Plus, Minus} from "lucide-react";
 
 import {CartItem as CartItemType} from "@/lib/store/cartStore";
 import {useCartStore} from "@/lib/store/cartStore";
+import {getImageUrl} from "@/lib/utils/imageUtil";
 
 interface CartItemProps {
   item: CartItemType;
@@ -50,7 +51,7 @@ export default function CartItem({item}: CartItemProps) {
       {/* Product Image */}
       <div className="flex-shrink-0 relative w-20 h-20 rounded-md overflow-hidden">
         <Image
-          src={item.product.image_url}
+          src={getImageUrl(item.product.image_url)}
           alt={item.product.name}
           fill
           sizes="80px"

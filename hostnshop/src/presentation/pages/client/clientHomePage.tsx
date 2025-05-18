@@ -53,19 +53,17 @@ export default function ClientHomePage() {
     <div className="w-full">
       {/* Hero Section */}
       <section className="relative h-[600px] flex items-center">
-      <div className="absolute inset-0 z-0 w-full h-full">
-      <Image
-        src="/assets/images/hero-banner.jpg"
-        alt="hero banner"
-        fill
-        priority
-        quality={100}
-        sizes="100vw"
-        className="object-cover opacity-90"
-      />
-      <div className="absolute inset-0 bg-black/30" />
-    </div>
-
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/assets/images/hero-banner.jpg"
+            alt="hero banner"
+            fill
+            priority
+            quality={100} 
+            className="object-cover opacity-90"
+          />
+          <div className="absolute inset-0 bg-black/30" />
+        </div>
 
         <div className="container mx-auto relative z-10 px-4 sm:px-6 lg:px-8">
           <div className="max-w-xl text-white">

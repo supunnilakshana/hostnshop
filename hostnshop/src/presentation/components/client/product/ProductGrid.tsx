@@ -1,3 +1,6 @@
+'use client'
+
+
 // src/components/client/product/ProductGrid.tsx
 import {ReadProductDTO} from "@/shared/dtos";
 import ProductCard from "./ProductCard";

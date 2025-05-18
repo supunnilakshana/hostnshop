@@ -9,7 +9,7 @@ export default function AboutUs() {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="relative h-[400px] flex items-center">
+      <section className="relative h-[550px] flex items-center">
       <div className="absolute inset-0 z-0 w-full h-full">
       <Image
         src="/assets/images/about-hero.jpg"
