@@ -1,13 +1,12 @@
-// src/app/api/orders/route.ts
+import {NextRequest} from "next/server";
 import {OrderController} from "@/application/controllers/order.controller";
-import {NextRequest, NextResponse} from "next/server";
 
 const orderController = new OrderController();
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
-  return orderController.createOrder(req);
+export async function GET(req: NextRequest) {
+  return await orderController.getOrders(req);
 }
 
-export async function GET(req: NextRequest): Promise<NextResponse> {
-  return orderController.getOrders(req);
+export async function POST(req: NextRequest) {
+  return await orderController.createOrder(req);
 }

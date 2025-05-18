@@ -6,3 +6,6 @@ const categoryController = new CategoryController();
 export async function DELETE(req: NextRequest) {
   return await categoryController.deleteCategory(req);
 }
+export async function PUT(req: NextRequest) {
+  return await categoryController.updateCategory(req);
+}

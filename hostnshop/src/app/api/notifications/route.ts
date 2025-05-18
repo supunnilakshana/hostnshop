@@ -1,23 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {CategoryController} from "@/application/controllers/category.controller";
-import {NextRequest} from "next/server";
+// import {CategoryController} from "@/application/controllers/category.controller";
 
-// const categoryController = new CategoryController();
+import {NextRequest, NextResponse} from "next/server";
 
-// export async function GET(req: NextRequest) {
-//   return await categoryController.getCategories(req);
-// }
-
-// export async function POST(req: NextRequest) {
-//   return await categoryController.createCategory(req);
-// }
-
-// export async function PUT(req: NextRequest) {
-//   return await categoryController.updateCategory(req);
-// }
-// export async function DELETE(req: NextRequest) {
-//   return await categoryController.deleteCategory(req);
-// }
 export async function GET(req: NextRequest) {
-  return [];
+  // Return an empty array as JSON response
+  return NextResponse.json([]);
 }

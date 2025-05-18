@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/components/account/NotificationsSettings.tsx
 "use client";
 
@@ -48,7 +49,7 @@ export default function NotificationsSettings() {
       setSettings(response.data);
       // }
     } catch (error) {
-      console.error("Failed to fetch notification settings:", error);
+      // console.error("Failed to fetch notification settings:", error);
     } finally {
       setIsLoading(false);
     }

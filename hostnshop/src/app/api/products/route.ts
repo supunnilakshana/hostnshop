@@ -11,10 +11,3 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   return await productController.createProduct(req);
 }
-
-export async function PUT(req: NextRequest) {
-  return await productController.updateProduct(req);
-}
-export async function DELETE(req: NextRequest) {
-  return await productController.deleteProduct(req);
-}

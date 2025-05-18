@@ -7,6 +7,7 @@ import {Minus, Plus, ShoppingCart, Heart, Share2} from "lucide-react";
 import {Button} from "@/presentation/components/ui/button";
 import {ReadProductDTO} from "@/shared/dtos";
 import {useCartStore} from "@/lib/store/cartStore";
+import {getImageUrl} from "@/lib/utils/imageUtil";
 
 interface ProductDetailProps {
   product: ReadProductDTO;
@@ -49,7 +50,7 @@ export default function ProductDetail({product, category}: ProductDetailProps) {
         {/* Product Image */}
         <div className="relative h-96 md:h-full rounded-lg overflow-hidden">
           <Image
-            src={product.image_url}
+            src={getImageUrl(product.image_url)}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"

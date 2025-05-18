@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/presentation/pages/orderPage.tsx
+// Updated src/presentation/pages/orderPage.tsx with AdminOrderDetails integration
 "use client";
 
 import React, {useState, useEffect} from "react";
@@ -19,9 +19,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
-  DialogClose,
 } from "@/presentation/components/ui/dialog";
 import {
   Select,
@@ -49,9 +47,11 @@ import {
   XCircle,
 } from "lucide-react";
 import {Badge} from "@/presentation/components/ui/badge";
-
 import {OrderStatus} from "@/shared/enums";
 import AdminLayout from "@/presentation/components/admin/layout/adminLayout";
+
+import {orderService} from "@/lib/api/orderService"; // Import orderService
+import AdminOrderDetails from "@/presentation/components/admin/order/AdminOrderDetails";
 
 interface OrderItem {
   id: string;
@@ -94,6 +94,8 @@ export default function OrderPage() {
   const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
   const [viewOrderModalOpen, setViewOrderModalOpen] = useState(false);
   const [updateStatusModalOpen, setUpdateStatusModalOpen] = useState(false);
+  const [adminOrderDetailsOpen, setAdminOrderDetailsOpen] = useState(false); // New state for AdminOrderDetails
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null); // Order ID for AdminOrderDetails
   const [newStatus, setNewStatus] = useState<OrderStatus | "">("");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "">("");
@@ -114,20 +116,17 @@ export default function OrderPage() {
     setLoading(true);
     setError(null);
     try {
-      let url = `/api/orders?page=${currentPage}&limit=${itemsPerPage}`;
+      const response = await orderService.getOrders({
+        page: currentPage,
+        limit: itemsPerPage,
+        status: statusFilter || undefined,
+      });
 
-      if (statusFilter) {
-        url += `&status=${statusFilter}`;
-      }
-
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data.success) {
-        setOrders(data.data?.orders || []);
-        setTotalPages(data.data?.totalPages || 1);
+      if (response.data) {
+        setOrders((response.data.orders as unknown as Order[]) || []);
+        setTotalPages(response.data.totalPages || 1);
       } else {
-        setError(data.message || "Failed to fetch orders");
+        setError("Failed to fetch orders");
       }
     } catch (err) {
       setError("An error occurred while fetching orders");
@@ -141,14 +140,13 @@ export default function OrderPage() {
     setOrderDetailLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/orders/${orderId}`);
-      const data = await response.json();
+      const response = await orderService.getOrderById(orderId);
 
-      if (data.success) {
-        setCurrentOrder(data.data);
+      if (response.data) {
+        setCurrentOrder(response.data.data);
         setViewOrderModalOpen(true);
       } else {
-        setError(data.message || "Failed to fetch order details");
+        setError("Failed to fetch order details");
       }
     } catch (err) {
       setError("An error occurred while fetching order details");
@@ -164,17 +162,15 @@ export default function OrderPage() {
     setIsSubmitting(true);
     setError(null);
     try {
-      const response = await fetch(`/api/orders/${currentOrder.id}/status`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({status: newStatus}),
-      });
+      // First let's create an update function in orderService if it doesn't exist
+      const updateOrderStatus = async (orderId: string, status: string) => {
+        return await orderService.updateOrderStatus(orderId, status);
+      };
 
-      const data = await response.json();
+      const response = await updateOrderStatus(currentOrder.id, newStatus);
 
-      if (data.success) {
+      // Assuming the response follows the same pattern as other API responses
+      if (response.data) {
         // Update orders list
         setOrders(
           orders.map((order) =>
@@ -192,7 +188,7 @@ export default function OrderPage() {
         setUpdateStatusModalOpen(false);
         setNewStatus("");
       } else {
-        setError(data.message || "Failed to update order status");
+        setError("Failed to update order status");
       }
     } catch (err) {
       setError("An error occurred while updating order status");
@@ -204,6 +200,11 @@ export default function OrderPage() {
 
   const openViewOrderModal = (order: Order) => {
     fetchOrderDetails(order.id);
+  };
+
+  const openAdminOrderDetails = (orderId: string) => {
+    setSelectedOrderId(orderId);
+    setAdminOrderDetailsOpen(true);
   };
 
   const openUpdateStatusModal = (order: Order) => {
@@ -283,7 +284,8 @@ export default function OrderPage() {
             />
           </div>
           <div>
-            {/* <Select
+            {/* Status filter - Uncomment if needed
+            <Select
               value={statusFilter}
               onValueChange={(value) => {
                 setStatusFilter(value as OrderStatus | "");
@@ -303,7 +305,8 @@ export default function OrderPage() {
                 <SelectItem value={OrderStatus.DELIVERED}>Delivered</SelectItem>
                 <SelectItem value={OrderStatus.CANCELLED}>Cancelled</SelectItem>
               </SelectContent>
-            </Select> */}
+            </Select>
+            */}
           </div>
           <div className="lg:flex lg:justify-end">
             <Button
@@ -388,7 +391,7 @@ export default function OrderPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => openViewOrderModal(order)}
+                              onClick={() => openAdminOrderDetails(order.id)} // Open the AdminOrderDetails modal
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -503,7 +506,7 @@ export default function OrderPage() {
         </div>
       </div>
 
-      {/* View Order Modal */}
+      {/* View Order Modal - Original Dialog */}
       <Dialog open={viewOrderModalOpen} onOpenChange={setViewOrderModalOpen}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
@@ -777,6 +780,20 @@ export default function OrderPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* AdminOrderDetails Component */}
+      <AdminOrderDetails
+        open={adminOrderDetailsOpen}
+        onOpenChange={(isOpen) => {
+          setAdminOrderDetailsOpen(isOpen);
+          // Refresh orders if modal closed and there were changes
+          if (!isOpen) {
+            fetchOrders();
+          }
+        }}
+        orderId={selectedOrderId}
+        onStatusUpdate={fetchOrders}
+      />
     </AdminLayout>
   );
 }

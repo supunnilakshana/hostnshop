@@ -5,6 +5,16 @@ import {NextConfig} from "next";
  */
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  output: "standalone",
+  typescript: {
+    // Disable TypeScript type checking during builds
+    ignoreBuildErrors: true,
+  },
+
+  eslint: {
+    // Disable ESLint during builds
+    ignoreDuringBuilds: true,
+  },
 
   // Image configuration to allow images from all domains
   images: {

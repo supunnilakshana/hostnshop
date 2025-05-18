@@ -17,23 +17,39 @@ export class OrderRepository implements IOrderRepository {
     data: CreateOrderDTO,
     orderItems: CreateOrderItemDTO[]
   ): Promise<ReadOrderDTO> {
-    const order = await prisma.order.create({
-      data: {
-        ...data,
-        orderItems: {
-          create: orderItems,
-        },
-      },
-    });
+    try {
+      //remove order_id from orderItems as list
+      const orderItemsWithoutOrderId = orderItems.map((item) => {
+        const {order_id, ...rest} = item;
+        return rest;
+      });
 
-    return OrderMapper.toReadDTO(order);
+      const order = await prisma.order.create({
+        data: {
+          ...data,
+          orderItems: {
+            create: orderItemsWithoutOrderId,
+          },
+        },
+      });
+
+      return OrderMapper.toReadDTO(order);
+    } catch (error) {
+      console.error("Error creating order:", error);
+      throw new Error("Failed to create order");
+    }
   }
 
   async update(id: string, data: UpdateOrderDTO): Promise<ReadOrderDTO | null> {
     try {
       const order = await prisma.order.update({
         where: {id},
-        data,
+        data: {
+          ...data,
+          orderItems: {
+            deleteMany: {},
+          },
+        },
       });
       return OrderMapper.toReadDTO(order);
     } catch (error) {

@@ -1,7 +1,7 @@
 // src/app/checkout/page.tsx
 "use client";
 
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {useCartStore} from "@/lib/store/cartStore";
@@ -9,11 +9,53 @@ import {useAuthStore} from "@/lib/store/authStore";
 import {Button} from "@/presentation/components/ui/button";
 import {ArrowLeft} from "lucide-react";
 import CheckoutForm from "@/presentation/components/client/cart/cartCheckout";
+import {ShippingMethod} from "@/shared/enums";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const {items, totalPrice} = useCartStore();
   const {isAuthenticated} = useAuthStore();
+  const [selectedShippingMethod, setSelectedShippingMethod] = useState(
+    ShippingMethod.STANDARD
+  );
+
+  // Define shipping methods (same as in CheckoutForm)
+  const shippingMethods = [
+    {
+      id: ShippingMethod.STANDARD,
+      name: "Standard Shipping",
+      description: "Delivery in 5-7 business days",
+      cost: 0,
+      label: "Free",
+    },
+    {
+      id: ShippingMethod.EXPRESS,
+      name: "Express Shipping",
+      description: "Delivery in 2-3 business days",
+      cost: 12.99,
+      label: "$12.99",
+    },
+    {
+      id: ShippingMethod.OVERNIGHT,
+      name: "Overnight Shipping",
+      description: "Delivery next business day",
+      cost: 24.99,
+      label: "$24.99",
+    },
+  ];
+
+  // Get selected shipping method details
+  const getSelectedShippingMethod = () => {
+    return (
+      shippingMethods.find((method) => method.id === selectedShippingMethod) ||
+      shippingMethods[0]
+    );
+  };
+
+  // Calculate total with shipping
+  const calculateTotal = () => {
+    return totalPrice() + getSelectedShippingMethod().cost;
+  };
 
   useEffect(() => {
     // Redirect if cart is empty
@@ -23,7 +65,7 @@ export default function CheckoutPage() {
 
     // Redirect if not authenticated
     if (!isAuthenticated) {
-      router.push("/login?redirect=/checkout");
+      router.push("/auth/login?redirect=/checkout");
     }
   }, [items, isAuthenticated, router]);
 
@@ -54,7 +96,11 @@ export default function CheckoutPage() {
         <div className="lg:col-span-2">
           {/* Checkout Form */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <CheckoutForm />
+            <CheckoutForm
+              onShippingMethodChange={(method) =>
+                setSelectedShippingMethod(method)
+              }
+            />
           </div>
         </div>
 
@@ -95,20 +141,36 @@ export default function CheckoutPage() {
 
               <div className="flex justify-between">
                 <span className="text-textSecondary">Shipping</span>
-                <span>Free</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-textSecondary">Tax</span>
-                <span>${(totalPrice() * 0.07).toFixed(2)}</span>
+                <span>{getSelectedShippingMethod().label}</span>
               </div>
 
               <div className="flex justify-between font-medium text-lg pt-2 border-t border-gray-200">
                 <span>Total</span>
                 <span className="text-bg_primary">
-                  ${(totalPrice() + totalPrice() * 0.07).toFixed(2)}
+                  ${calculateTotal().toFixed(2)}
                 </span>
               </div>
+            </div>
+
+            {/* Available Shipping Options */}
+            <div className="mt-6 border-t border-gray-200 pt-4">
+              <h3 className="text-md font-medium text-textPrimary mb-2">
+                Shipping Options
+              </h3>
+              <ul className="text-sm text-textSecondary space-y-1">
+                {shippingMethods.map((method) => (
+                  <li
+                    key={method.id}
+                    className={
+                      method.id === selectedShippingMethod
+                        ? "text-bg_primary font-medium"
+                        : ""
+                    }
+                  >
+                    {method.name}: {method.label}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>

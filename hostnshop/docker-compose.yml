@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: hostnshop-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-hostnshop}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  hostnshop:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: ${APP_NAME:-HostNShop}
+        APP_DESCRIPTION: ${APP_DESCRIPTION:-"E-commerce application"}
+        CONTACT_EMAIL: ${CONTACT_EMAIL:-"contact@hostnshop.com"}
+        CONTACT_PHONE: ${CONTACT_PHONE:-"+1 (555) 123-4567"}
+        ADMIN_EMAIL: ${ADMIN_EMAIL:-"admin@hostnshop.com"}
+        ADMIN_PASSWORD: ${ADMIN_PASSWORD:-"Admin123!"}
+        DATABASE_URL: ${DATABASE_URL:-"postgresql://postgres:postgres@postgres:5432/hostnshop?schema=public"}
+    container_name: hostnshop-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL:-"postgresql://postgres:postgres@postgres:5432/hostnshop?schema=public"}
+      JWT_SECRET: ${JWT_SECRET:-"your-secret-key"}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-"your-refresh-secret-key"}
+      NEXT_PUBLIC_APP_NAME: ${APP_NAME:-HostNShop}
+      NEXT_PUBLIC_APP_DESCRIPTION: ${APP_DESCRIPTION:-"E-commerce application"}
+      NEXT_PUBLIC_CONTACT_EMAIL: ${CONTACT_EMAIL:-"contact@hostnshop.com"}
+      NEXT_PUBLIC_CONTACT_PHONE: ${CONTACT_PHONE:-"+1 (555) 123-4567"}
+      NEXT_PUBLIC_LOGO_PATH: ${LOGO_PATH:-"/assets/images/HostNShop.png"}
+      NEXT_PUBLIC_FAVICON_PATH: ${FAVICON_PATH:-"/favicon.ico"}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-"admin@hostnshop.com"}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-"Admin123!"}
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

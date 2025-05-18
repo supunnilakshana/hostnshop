@@ -1,20 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/app/products/[id]/page.tsx
 import {productService} from "@/lib/api/productService";
 import ProductDetail from "@/presentation/components/client/product/ProductDetail";
 import ProductGrid from "@/presentation/components/client/product/ProductGrid";
 import ReviewList from "@/presentation/components/client/product/ReviewList";
 import ReviewStats from "@/presentation/components/client/product/ReviewStats";
-
 import {notFound} from "next/navigation";
 
 interface ProductPageProps {
-  params: {id: string};
+  params: Promise<{id: string}>;
 }
 
 export default async function ProductPage({params}: ProductPageProps) {
   try {
-    const {id} = params;
+    // Await params before using it
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
+
     const productResponse = await productService.getProductById(id);
 
     if (!productResponse.data) {
@@ -78,7 +81,6 @@ export default async function ProductPage({params}: ProductPageProps) {
         )}
       </div>
     );
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return notFound();
   }

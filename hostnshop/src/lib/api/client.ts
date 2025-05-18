@@ -43,8 +43,8 @@ export const apiClient = {
 
     const {accessToken, refreshToken, logout} = useAuthStore.getState();
 
-    console.log("Access Token:" + accessToken);
-    console.log("Refresh Token:" + refreshToken);
+    // console.log("Access Token:" + accessToken);
+    // console.log("Refresh Token:" + refreshToken);
 
     const headers = new Headers(fetchOptions.headers);
 

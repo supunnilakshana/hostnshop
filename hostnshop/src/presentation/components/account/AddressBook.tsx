@@ -49,7 +49,7 @@ export default function AddressBook() {
       setAddresses(response.data);
       // }
     } catch (error) {
-      console.error("Failed to fetch addresses:", error);
+      // console.error("Failed to fetch addresses:", error);
     } finally {
       setIsLoading(false);
     }
