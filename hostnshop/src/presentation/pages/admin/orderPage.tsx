@@ -312,7 +312,7 @@ export default function OrderPage() {
             <Button
               variant="outline"
               onClick={fetchOrders}
-              className="w-full lg:w-auto"
+              className="w-full lg:w-auto bg-bg_primary hover:bg-btn_hover text-accent hover:text-accent"
             >
               <svg
                 className="h-4 w-4 mr-2"
@@ -463,7 +463,7 @@ export default function OrderPage() {
                               }
                               className={
                                 page === currentPage
-                                  ? "bg-bg_primary hover:bg-btn_hover"
+                                  ? "bg-bg_primary hover:bg-btn_hover  text-accent hover:text-accent"
                                   : ""
                               }
                               onClick={() => handlePageChange(page)}

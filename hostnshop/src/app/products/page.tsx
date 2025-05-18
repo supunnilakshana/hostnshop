@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// src/app/products/page.tsx
 "use client";
 
 import {useState, useEffect} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
-import {Loader2, Search} from "lucide-react";
+import {Loader2, Search, ShoppingBag} from "lucide-react";
+import Image from "next/image";
 import {productService} from "@/lib/api/productService";
 import ProductFilter from "@/presentation/components/client/product/productFilter";
 import ProductGrid from "@/presentation/components/client/product/ProductGrid";
@@ -19,9 +18,8 @@ export default function ProductsPage() {
 
   // State for products and filtering
   const [products, setProducts] = useState<ReadProductDTO[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<ReadProductDTO[]>(
-    []
-  );
+  const [filteredProducts, setFilteredProducts] = useState<ReadProductDTO[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalProducts, setTotalProducts] = useState(0);
@@ -274,242 +272,276 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-8">
-      {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-textPrimary">
-          {searchQuery
-            ? `Search Results for "${searchQuery}"`
-            : selectedCategories.length === 1
-            ? `${getCategoryName(selectedCategories[0])} Products`
-            : "Shop All Products"}
-        </h1>
-
-        {/* Search Bar */}
-        <div className="mt-4 flex flex-col sm:flex-row gap-4">
-          <form onSubmit={handleSearch} className="flex-1 flex">
-            <div className="relative flex-1">
-              <Input
-                type="text"
-                placeholder="Search products..."
-                value={tempSearchQuery}
-                onChange={(e) => setTempSearchQuery(e.target.value)}
-                className="pr-10"
-              />
-              <button
-                type="submit"
-                className="absolute inset-y-0 right-0 flex items-center px-3"
-              >
-                <Search className="h-4 w-4 text-gray-500" />
-              </button>
-            </div>
-          </form>
-
-          {/* Active Filter Tags */}
-          {activeFilterCount > 0 && (
-            <div className="flex items-center gap-2 flex-wrap">
-              {selectedCategories.map((catId) => (
-                <Badge
-                  key={catId}
-                  variant="secondary"
-                  className="flex items-center gap-1"
-                >
-                  {getCategoryName(catId)}
-                  <button
-                    onClick={() => {
-                      setSelectedCategories(
-                        selectedCategories.filter((id) => id !== catId)
-                      );
-                    }}
-                    className="ml-1 hover:text-red-500"
-                  >
-                    ×
-                  </button>
-                </Badge>
-              ))}
-
-              {searchQuery && (
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  Search: {searchQuery}
-                  <button
-                    onClick={() => {
-                      setSearchQuery("");
-                      setTempSearchQuery("");
-                    }}
-                    className="ml-1 hover:text-red-500"
-                  >
-                    ×
-                  </button>
-                </Badge>
-              )}
-
-              {inStock && (
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  In Stock
-                  <button
-                    onClick={() => setInStock(false)}
-                    className="ml-1 hover:text-red-500"
-                  >
-                    ×
-                  </button>
-                </Badge>
-              )}
-
-              {onSale && (
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  On Sale
-                  <button
-                    onClick={() => setOnSale(false)}
-                    className="ml-1 hover:text-red-500"
-                  >
-                    ×
-                  </button>
-                </Badge>
-              )}
-
-              {(priceRange[0] > 0 || priceRange[1] < 1000) && (
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  Price: ${priceRange[0]} - ${priceRange[1]}
-                  <button
-                    onClick={() => {
-                      if (products.length > 0) {
-                        const prices = products.map((p) => p.price);
-                        const minPrice = Math.floor(Math.min(...prices));
-                        const maxPrice = Math.ceil(Math.max(...prices));
-                        setPriceRange([minPrice, maxPrice]);
-                      } else {
-                        setPriceRange([0, 1000]);
-                      }
-                    }}
-                    className="ml-1 hover:text-red-500"
-                  >
-                    ×
-                  </button>
-                </Badge>
-              )}
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleClearFilters}
-                className="ml-auto"
-              >
-                Clear All
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {totalProducts > 0 && (
-          <p className="text-textSecondary mt-4">
-            Showing {paginatedProducts.length} of {totalProducts} products
-          </p>
-        )}
-      </div>
-
-      {/* Product Grid with Filters */}
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Filter Sidebar */}
-        <div className="lg:w-1/4">
-          <ProductFilter
-            categories={categories}
-            selectedCategories={selectedCategories}
-            setSelectedCategories={setSelectedCategories}
-            priceRange={priceRange}
-            setPriceRange={setPriceRange}
-            inStock={inStock}
-            setInStock={setInStock}
-            onSale={onSale}
-            setOnSale={setOnSale}
-            minPrice={0}
-            maxPrice={1000}
-            clearFilters={handleClearFilters}
+    <>
+      {/* New Hero Section */}
+      <section className="relative h-[550px]">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/assets/images/products-hero.jpg"
+            alt="Shop at HostNShop"
+            fill
+            priority
+            quality={100}            
+            sizes="100vw"             
+            className="object-cover"
           />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40" />
         </div>
-
-        {/* Product Grid */}
-        <div className="lg:w-3/4">
-          {loading ? (
-            <div className="flex justify-center items-center h-96">
-              <Loader2 className="h-8 w-8 animate-spin text-bg_primary" />
+        
+        <div className="relative z-10 container mx-auto h-full flex flex-col justify-center px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl text-white">
+            <div className="flex items-center gap-2 mb-4">
+              <ShoppingBag className="h-6 w-6" />
+              <span className="text-sm font-medium uppercase tracking-wider">Our Collection</span>
             </div>
-          ) : paginatedProducts.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg border border-gray-200 shadow-sm">
-              <h3 className="text-lg font-medium text-textPrimary mb-2">
-                No products found
-              </h3>
-              <p className="text-textSecondary mb-4">
-                We couldn&lsquo;t find any products matching your current
-                filters.
-              </p>
-              <Button onClick={handleClearFilters}>Clear All Filters</Button>
-            </div>
-          ) : (
-            <>
-              <ProductGrid products={paginatedProducts} />
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Discover Quality Products
+            </h1>
+            <p className="text-lg opacity-90 mb-6">
+              Browse our carefully curated selection of high-quality products at competitive prices.
+            </p>
+            
+          </div>
+        </div>
+      </section>
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-center mt-8">
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {/* Previous Page Button */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        setCurrentPage(Math.max(1, currentPage - 1))
-                      }
-                      disabled={currentPage === 1}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-textPrimary">
+            {searchQuery
+              ? `Search Results for "${searchQuery}"`
+              : selectedCategories.length === 1
+              ? `${getCategoryName(selectedCategories[0])} Products`
+              : "Shop All Products"}
+          </h1>
+
+          {/* Search Bar */}
+          <div className="mt-4 flex flex-col sm:flex-row gap-4">
+            <form onSubmit={handleSearch} className="flex-1 flex">
+              <div className="relative flex-1">
+                <Input
+                  type="text"
+                  placeholder="Search products..."
+                  value={tempSearchQuery}
+                  onChange={(e) => setTempSearchQuery(e.target.value)}
+                  className="pr-10"
+                />
+                <button
+                  type="submit"
+                  className="absolute inset-y-0 right-0 flex items-center px-3"
+                >
+                  <Search className="h-4 w-4 text-gray-500" />
+                </button>
+              </div>
+            </form>
+
+            {/* Active Filter Tags */}
+            {activeFilterCount > 0 && (
+              <div className="flex items-center gap-2 flex-wrap">
+                {selectedCategories.map((catId) => (
+                  <Badge
+                    key={catId}
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
+                    {getCategoryName(catId)}
+                    <button
+                      onClick={() => {
+                        setSelectedCategories(
+                          selectedCategories.filter((id) => id !== catId)
+                        );
+                      }}
+                      className="ml-1 hover:text-red-500"
                     >
-                      Previous
-                    </Button>
+                      ×
+                    </button>
+                  </Badge>
+                ))}
 
-                    {/* Page Numbers */}
-                    {Array.from({length: Math.min(5, totalPages)}, (_, i) => {
-                      // Create centered window of 5 pages
-                      let pageNum;
-                      if (totalPages <= 5) {
-                        pageNum = i + 1;
-                      } else if (currentPage <= 3) {
-                        pageNum = i + 1;
-                      } else if (currentPage >= totalPages - 2) {
-                        pageNum = totalPages - 4 + i;
-                      } else {
-                        pageNum = currentPage - 2 + i;
-                      }
-
-                      return (
-                        <Button
-                          key={pageNum}
-                          variant={
-                            currentPage === pageNum ? "default" : "outline"
-                          }
-                          size="sm"
-                          onClick={() => setCurrentPage(pageNum)}
-                        >
-                          {pageNum}
-                        </Button>
-                      );
-                    })}
-
-                    {/* Next Page Button */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        setCurrentPage(Math.min(totalPages, currentPage + 1))
-                      }
-                      disabled={currentPage === totalPages}
+                {searchQuery && (
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    Search: {searchQuery}
+                    <button
+                      onClick={() => {
+                        setSearchQuery("");
+                        setTempSearchQuery("");
+                      }}
+                      className="ml-1 hover:text-red-500"
                     >
-                      Next
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </>
+                      ×
+                    </button>
+                  </Badge>
+                )}
+
+                {inStock && (
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    In Stock
+                    <button
+                      onClick={() => setInStock(false)}
+                      className="ml-1 hover:text-red-500"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
+
+                {onSale && (
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    On Sale
+                    <button
+                      onClick={() => setOnSale(false)}
+                      className="ml-1 hover:text-red-500"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
+
+                {(priceRange[0] > 0 || priceRange[1] < 1000) && (
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    Price: ${priceRange[0]} - ${priceRange[1]}
+                    <button
+                      onClick={() => {
+                        if (products.length > 0) {
+                          const prices = products.map((p) => p.price);
+                          const minPrice = Math.floor(Math.min(...prices));
+                          const maxPrice = Math.ceil(Math.max(...prices));
+                          setPriceRange([minPrice, maxPrice]);
+                        } else {
+                          setPriceRange([0, 1000]);
+                        }
+                      }}
+                      className="ml-1 hover:text-red-500"
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                )}
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClearFilters}
+                  className="ml-auto"
+                >
+                  Clear All
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {totalProducts > 0 && (
+            <p className="text-textSecondary mt-4">
+              Showing {paginatedProducts.length} of {totalProducts} products
+            </p>
           )}
         </div>
+
+        {/* Product Grid with Filters */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Filter Sidebar */}
+          <div className="lg:w-1/4">
+            <ProductFilter
+              categories={categories}
+              selectedCategories={selectedCategories}
+              setSelectedCategories={setSelectedCategories}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+              inStock={inStock}
+              setInStock={setInStock}
+              onSale={onSale}
+              setOnSale={setOnSale}
+              minPrice={0}
+              maxPrice={1000}
+              clearFilters={handleClearFilters}
+            />
+          </div>
+
+          {/* Product Grid */}
+          <div className="lg:w-3/4">
+            {loading ? (
+              <div className="flex justify-center items-center h-96">
+                <Loader2 className="h-8 w-8 animate-spin text-bg_primary" />
+              </div>
+            ) : paginatedProducts.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-lg border border-gray-200 shadow-sm">
+                <h3 className="text-lg font-medium text-textPrimary mb-2">
+                  No products found
+                </h3>
+                <p className="text-textSecondary mb-4">
+                  We couldn&lsquo;t find any products matching your current
+                  filters.
+                </p>
+                <Button onClick={handleClearFilters}>Clear All Filters</Button>
+              </div>
+            ) : (
+              <>
+                <ProductGrid products={paginatedProducts} />
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center mt-8">
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {/* Previous Page Button */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setCurrentPage(Math.max(1, currentPage - 1))
+                        }
+                        disabled={currentPage === 1}
+                      >
+                        Previous
+                      </Button>
+
+                      {/* Page Numbers */}
+                      {Array.from({length: Math.min(5, totalPages)}, (_, i) => {
+                        // Create centered window of 5 pages
+                        let pageNum;
+                        if (totalPages <= 5) {
+                          pageNum = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNum = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          pageNum = totalPages - 4 + i;
+                        } else {
+                          pageNum = currentPage - 2 + i;
+                        }
+
+                        return (
+                          <Button
+                            key={pageNum}
+                            variant={
+                              currentPage === pageNum ? "default" : "outline"
+                            }
+                            size="sm"
+                            onClick={() => setCurrentPage(pageNum)}
+                          >
+                            {pageNum}
+                          </Button>
+                        );
+                      })}
+
+                      {/* Next Page Button */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setCurrentPage(Math.min(totalPages, currentPage + 1))
+                        }
+                        disabled={currentPage === totalPages}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

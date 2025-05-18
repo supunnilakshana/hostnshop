@@ -2,7 +2,9 @@
 // src/app/contact/page.tsx
 "use client";
 
-import {useState} from "react";
+
+
+import {useEffect, useRef, useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {Button} from "@/presentation/components/ui/button";
@@ -10,6 +12,13 @@ import {Input} from "@/presentation/components/ui/input";
 import {Textarea} from "@/presentation/components/ui/textarea";
 import {Label} from "@/presentation/components/ui/label";
 import {Mail, Phone, MapPin, Clock, CheckCircle} from "lucide-react";
+import dynamic from 'next/dynamic';
+
+// Dynamically import the MapComponent with no SSR
+const MapComponent = dynamic(
+  () => import("@/presentation/components/client/map/mapComponenet"),
+  { ssr: false } // This ensures the component only loads on the client side
+);
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -68,7 +77,7 @@ export default function ContactUs() {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="relative h-[300px] flex items-center">
+      <section className="relative h-[550px] flex items-center">
         <div className="absolute inset-0 z-0">
           <Image
             src="/assets/images/contact-hero.jpg"
@@ -113,11 +122,9 @@ export default function ContactUs() {
                       Our Address
                     </h3>
                     <p className="text-textSecondary mt-1">
-                      123 Commerce Street
-                      <br />
-                      Business District
-                      <br />
-                      New York, NY 10001
+                      123 Galle Road<br />
+                      Colombo 3<br />
+                      Sri Lanka
                     </p>
                   </div>
                 </div>
@@ -374,27 +381,32 @@ export default function ContactUs() {
 
       {/* Map Section */}
       <section className="py-12 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-textPrimary mb-4">
-              Find Us
-            </h2>
-            <p className="text-textSecondary max-w-2xl mx-auto">
-              Visit our store or office in person
-            </p>
-          </div>
-
-          <div className="relative h-96 rounded-lg overflow-hidden shadow-md">
-            {/* Replace with an actual embedded map if available */}
-            <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-              <p className="text-textSecondary">
-                Map Placeholder - Replace with actual Google Maps or other map
-                provider
-              </p>
-            </div>
-          </div>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-textPrimary mb-4">
+            Find Us
+          </h2>
+          <p className="text-textSecondary max-w-2xl mx-auto">
+            Visit our office in Colombo, Sri Lanka
+          </p>
         </div>
-      </section>
+
+        <div className="relative h-96 rounded-lg overflow-hidden shadow-md">
+          <MapComponent />
+        </div>
+        
+        <div className="mt-6 text-center">
+          <a 
+            href="https://goo.gl/maps/4JfnZwZgzAJ8sYs37" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center text-bg_primary hover:underline"
+          >
+            <MapPin className="h-4 w-4 mr-1" /> Get directions
+          </a>
+        </div>
+      </div>
+    </section>
 
       {/* FAQ Section */}
       <section className="py-16">
