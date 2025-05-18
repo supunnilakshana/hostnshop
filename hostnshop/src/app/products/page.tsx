@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useEffect} from "react";
+import {useState, useEffect, Suspense} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 import {Loader2, Search, ShoppingBag} from "lucide-react";
 import Image from "next/image";
@@ -12,13 +12,16 @@ import {Button} from "@/presentation/components/ui/button";
 import {Badge} from "@/presentation/components/ui/badge";
 import {ReadProductDTO} from "@/shared/dtos";
 
-export default function ProductsPage() {
+// This component will contain all the logic that depends on useSearchParams
+function ProductsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // State for products and filtering
   const [products, setProducts] = useState<ReadProductDTO[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<ReadProductDTO[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ReadProductDTO[]>(
+    []
+  );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -281,26 +284,28 @@ export default function ProductsPage() {
             alt="Shop at HostNShop"
             fill
             priority
-            quality={100}            
-            sizes="100vw"             
+            quality={100}
+            sizes="100vw"
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40" />
         </div>
-        
+
         <div className="relative z-10 container mx-auto h-full flex flex-col justify-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl text-white">
             <div className="flex items-center gap-2 mb-4">
               <ShoppingBag className="h-6 w-6" />
-              <span className="text-sm font-medium uppercase tracking-wider">Our Collection</span>
+              <span className="text-sm font-medium uppercase tracking-wider">
+                Our Collection
+              </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Discover Quality Products
             </h1>
             <p className="text-lg opacity-90 mb-6">
-              Browse our carefully curated selection of high-quality products at competitive prices.
+              Browse our carefully curated selection of high-quality products at
+              competitive prices.
             </p>
-            
           </div>
         </div>
       </section>
@@ -360,7 +365,10 @@ export default function ProductsPage() {
                 ))}
 
                 {searchQuery && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
                     Search: {searchQuery}
                     <button
                       onClick={() => {
@@ -375,7 +383,10 @@ export default function ProductsPage() {
                 )}
 
                 {inStock && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
                     In Stock
                     <button
                       onClick={() => setInStock(false)}
@@ -387,7 +398,10 @@ export default function ProductsPage() {
                 )}
 
                 {onSale && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
                     On Sale
                     <button
                       onClick={() => setOnSale(false)}
@@ -399,7 +413,10 @@ export default function ProductsPage() {
                 )}
 
                 {(priceRange[0] > 0 || priceRange[1] < 1000) && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
                     Price: ${priceRange[0]} - ${priceRange[1]}
                     <button
                       onClick={() => {
@@ -543,5 +560,23 @@ export default function ProductsPage() {
         </div>
       </div>
     </>
+  );
+}
+
+// Loading fallback component
+function ProductsLoading() {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <Loader2 className="h-10 w-10 animate-spin text-primary" />
+    </div>
+  );
+}
+
+// Main wrapper component that implements the Suspense boundary
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<ProductsLoading />}>
+      <ProductsContent />
+    </Suspense>
   );
 }
