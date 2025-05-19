@@ -1,31 +1,30 @@
 'use client'
 
-
-// src/components/client/product/ProductGrid.tsx
-import {ReadProductDTO} from "@/shared/dtos";
+import { ReadProductDTO } from "@/shared/dtos";
 import ProductCard from "./ProductCard";
-import {motion} from "framer-motion";
+import { motion } from "framer-motion";
 
 interface ProductGridProps {
   products: ReadProductDTO[];
 }
 
-export default function ProductGrid({products}: ProductGridProps) {
-  // No products to display
-  if (products.length === 0) {
-    return null;
-  }
-
-  // Animation variants for staggered grid animation
-  const containerVariants = {
-    hidden: {opacity: 0},
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-      },
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
     },
-  };
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
+export default function ProductGrid({ products }: ProductGridProps) {
+  if (products.length === 0) return null;
 
   return (
     <motion.div
@@ -35,9 +34,13 @@ export default function ProductGrid({products}: ProductGridProps) {
       animate="show"
     >
       {products.map((product) => (
-        <div key={product.id} className="h-full">
+        <motion.div
+          key={product.id}
+          className="h-full"
+          variants={itemVariants}
+        >
           <ProductCard product={product} />
-        </div>
+        </motion.div>
       ))}
     </motion.div>
   );

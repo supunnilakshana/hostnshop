@@ -3,6 +3,9 @@ import type {Metadata} from "next";
 import {Inter} from "next/font/google";
 import "./globals.css";
 
+import ServiceWorkerRegistration from '../presentation/components/ServiceWorkerRegistration'
+
+
 import Footer from "@/presentation/components/footer";
 
 import {Providers} from "@/lib/provider";
@@ -35,6 +38,8 @@ export default function RootLayout({
             <Footer />
           </div>
         </Providers>
+        <ServiceWorkerRegistration />
+     
       </body>
     </html>
   );
