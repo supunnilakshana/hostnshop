@@ -1,0 +1,1 @@
+code2prompt . --tokens --exclude="*.css,*.min.js,*.map,node_modules/**,build/**,dist/**,.next/**,.cache/**,public/build/**,coverage/**,*.lock,package-lock.json,package.json,yarn.lock,*.log,*.md,*.svg,*.png,*.jpg,*.jpeg,*.gif,*.ico,*.woff,*.woff2,*.eot,*.ttf,*.otf,*.md,package-lock.json,.src/**"

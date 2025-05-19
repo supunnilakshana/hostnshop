@@ -346,7 +346,7 @@ export default function OrderPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Order ID</TableHead>
-                      <TableHead>Customer</TableHead>
+                      {/* <TableHead>Customer</TableHead> */}
                       <TableHead>
                         <button
                           className="flex items-center"
@@ -367,7 +367,7 @@ export default function OrderPage() {
                         <TableCell className="font-medium">
                           {order.id.substring(0, 8)}...
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           {order.customer ? (
                             <div>
                               <div className="font-medium">
@@ -380,7 +380,7 @@ export default function OrderPage() {
                           ) : (
                             <span className="text-gray-500">Unknown</span>
                           )}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>{formatDate(order.created_at)}</TableCell>
                         <TableCell className="font-medium">
                           ${order.total_price.toFixed(2)}
