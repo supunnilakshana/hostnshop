@@ -1,22 +1,36 @@
 version: '3.8'
 
+networks:
+  hostnshop-network:
+    driver: bridge
+
 services:
   postgres:
     image: postgres:15-alpine
     container_name: hostnshop-db
+    networks:
+      - hostnshop-network
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-hostnshop}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-hostnshop}"]
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+    command: >
+      postgres -c log_statement=all
+               -c log_destination=stderr
+               -c log_min_messages=info
+               -c shared_preload_libraries=''
 
   hostnshop:
     build:
@@ -29,16 +43,18 @@ services:
         CONTACT_PHONE: ${CONTACT_PHONE:-"+1 (555) 123-4567"}
         ADMIN_EMAIL: ${ADMIN_EMAIL:-"admin@hostnshop.com"}
         ADMIN_PASSWORD: ${ADMIN_PASSWORD:-"Admin123!"}
-        DATABASE_URL: ${DATABASE_URL:-"postgresql://postgres:postgres@postgres:5432/hostnshop?schema=public"}
+        DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-hostnshop}?schema=public&connect_timeout=300&pool_timeout=300&socket_timeout=300"
     container_name: hostnshop-app
+    networks:
+      - hostnshop-network
     depends_on:
       postgres:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      DATABASE_URL: ${DATABASE_URL:-"postgresql://postgres:postgres@postgres:5432/hostnshop?schema=public"}
-      JWT_SECRET: ${JWT_SECRET:-"your-secret-key"}
-      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-"your-refresh-secret-key"}
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-hostnshop}?schema=public&connect_timeout=300&pool_timeout=300&socket_timeout=300"
+      JWT_SECRET: ${JWT_SECRET:-"your-secret-key-change-in-production"}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-"your-refresh-secret-key-change-in-production"}
       NEXT_PUBLIC_APP_NAME: ${APP_NAME:-HostNShop}
       NEXT_PUBLIC_APP_DESCRIPTION: ${APP_DESCRIPTION:-"E-commerce application"}
       NEXT_PUBLIC_CONTACT_EMAIL: ${CONTACT_EMAIL:-"contact@hostnshop.com"}
@@ -47,9 +63,19 @@ services:
       NEXT_PUBLIC_FAVICON_PATH: ${FAVICON_PATH:-"/favicon.ico"}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-"admin@hostnshop.com"}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-"Admin123!"}
+      # Prisma specific settings
+      PRISMA_QUERY_ENGINE_LIBRARY: /app/node_modules/.prisma/client/libquery_engine-linux-musl-openssl-3.0.x.so.node
+      PRISMA_QUERY_ENGINE_BINARY: /app/node_modules/.prisma/client/query-engine-linux-musl-openssl-3.0.x
     ports:
       - "3000:3000"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/products', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   postgres_data:
+    driver: local
